@@ -1,0 +1,5 @@
+package com.example.terminal_marittimo;
+
+public class operazioniCliente {
+    
+}

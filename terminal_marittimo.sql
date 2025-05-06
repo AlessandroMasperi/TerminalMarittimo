@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 05, 2025 alle 21:31
+-- Creato il: Mag 06, 2025 alle 18:50
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.2.12
 
@@ -31,16 +31,17 @@ CREATE TABLE `autisti` (
   `id` int(11) NOT NULL,
   `nome` varchar(32) NOT NULL,
   `cognome` varchar(32) NOT NULL,
-  `patente` varchar(16) NOT NULL
+  `patente` varchar(16) NOT NULL,
+  `password` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dump dei dati per la tabella `autisti`
 --
 
-INSERT INTO `autisti` (`id`, `nome`, `cognome`, `patente`) VALUES
-(1, 'Marco', 'Rossi', 'BZ384932GR'),
-(2, 'Luca', 'Verdi', 'BS342911FF');
+INSERT INTO `autisti` (`id`, `nome`, `cognome`, `patente`, `password`) VALUES
+(1, 'Marco', 'Rossi', 'BZ384932GR', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(2, 'Luca', 'Verdi', 'BS342911FF', '5f4dcc3b5aa765d61d8327deb882cf99');
 
 -- --------------------------------------------------------
 
@@ -109,20 +110,21 @@ CREATE TABLE `cliente` (
   `indirizzo` varchar(128) NOT NULL,
   `telefono` varchar(16) NOT NULL,
   `email` varchar(64) NOT NULL,
-  `nomeAzienda` varchar(64) NOT NULL
+  `nomeAzienda` varchar(64) NOT NULL,
+  `password` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dump dei dati per la tabella `cliente`
 --
 
-INSERT INTO `cliente` (`id`, `nome`, `cognome`, `indirizzo`, `telefono`, `email`, `nomeAzienda`) VALUES
-(1, 'Giulia', 'Bianchi', 'Via Roma 12, Milano', '3471234567', 'giulia.bianchi@email.it', 'LogiTrans S.r.l.'),
-(2, 'Stefano', 'Neri', 'Via Torino 88, Torino', '3497654321', 'stefano.neri@email.it', 'Trasporti Italia S.p.A.'),
-(3, 'Chiara', 'Russo', 'Via Milano 45, Roma', '3401122334', 'chiara.russo@email.it', 'Distribuzioni Roma S.p.A.'),
-(4, 'Francesco', 'Leoni', 'Corso Garibaldi 77, Bologna', '3399988776', 'francesco.leoni@email.it', 'LogiOne Logistics'),
-(5, 'Anna', 'Greco', 'Via Manzoni 10, Bari', '3386655443', 'anna.greco@email.it', 'Bari Cargo S.r.l.'),
-(6, 'Davide', 'Sanna', 'Piazza Dante 15, Cagliari', '3372211334', 'davide.sanna@email.it', 'Sardegna Trasporti');
+INSERT INTO `cliente` (`id`, `nome`, `cognome`, `indirizzo`, `telefono`, `email`, `nomeAzienda`, `password`) VALUES
+(1, 'Giulia', 'Bianchi', 'Via Roma 12, Milano', '3471234567', 'giulia.bianchi@email.it', 'LogiTrans S.r.l.', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(2, 'Stefano', 'Neri', 'Via Torino 88, Torino', '3497654321', 'stefano.neri@email.it', 'Trasporti Italia S.p.A.', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(3, 'Chiara', 'Russo', 'Via Milano 45, Roma', '3401122334', 'chiara.russo@email.it', 'Distribuzioni Roma S.p.A.', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(4, 'Francesco', 'Leoni', 'Corso Garibaldi 77, Bologna', '3399988776', 'francesco.leoni@email.it', 'LogiOne Logistics', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(5, 'Anna', 'Greco', 'Via Manzoni 10, Bari', '3386655443', 'anna.greco@email.it', 'Bari Cargo S.r.l.', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(6, 'Davide', 'Sanna', 'Piazza Dante 15, Cagliari', '3372211334', 'davide.sanna@email.it', 'Sardegna Trasporti', '5f4dcc3b5aa765d61d8327deb882cf99');
 
 -- --------------------------------------------------------
 
@@ -164,20 +166,21 @@ CREATE TABLE `fornitore` (
   `indirizzo` varchar(128) NOT NULL,
   `telefono` varchar(16) NOT NULL,
   `email` varchar(64) NOT NULL,
-  `nomeAzienda` varchar(64) NOT NULL
+  `nomeAzienda` varchar(64) NOT NULL,
+  `password` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dump dei dati per la tabella `fornitore`
 --
 
-INSERT INTO `fornitore` (`id`, `nome`, `cognome`, `indirizzo`, `telefono`, `email`, `nomeAzienda`) VALUES
-(1, 'Alessandro', 'Gallo', 'Via Napoli 10, Napoli', '3409988776', 'a.gallo@forniture.it', 'Forniture Gallo S.r.l.'),
-(2, 'Marta', 'Conti', 'Via Firenze 23, Firenze', '3381122334', 'm.conti@logistica.it', 'Conti Logistic Group'),
-(3, 'Elena', 'Marini', 'Via Veneto 20, Verona', '3358822441', 'elena.marini@fornituremarini.it', 'Forniture Marini'),
-(4, 'Giorgio', 'Ferrari', 'Via Liguria 12, Milano', '3347766552', 'giorgio.ferrari@logferrari.it', 'Ferrari Logistic'),
-(5, 'Laura', 'Ricci', 'Via Mazzini 3, Pisa', '3365544332', 'laura.ricci@riccigroup.it', 'Ricci Group S.p.A.'),
-(6, 'Matteo', 'Bianchi', 'Via Trieste 18, Trieste', '3394433221', 'matteo.bianchi@mblogistics.it', 'MB Logistics');
+INSERT INTO `fornitore` (`id`, `nome`, `cognome`, `indirizzo`, `telefono`, `email`, `nomeAzienda`, `password`) VALUES
+(1, 'Alessandro', 'Gallo', 'Via Napoli 10, Napoli', '3409988776', 'a.gallo@forniture.it', 'Forniture Gallo S.r.l.', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(2, 'Marta', 'Conti', 'Via Firenze 23, Firenze', '3381122334', 'm.conti@logistica.it', 'Conti Logistic Group', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(3, 'Elena', 'Marini', 'Via Veneto 20, Verona', '3358822441', 'elena.marini@fornituremarini.it', 'Forniture Marini', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(4, 'Giorgio', 'Ferrari', 'Via Liguria 12, Milano', '3347766552', 'giorgio.ferrari@logferrari.it', 'Ferrari Logistic', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(5, 'Laura', 'Ricci', 'Via Mazzini 3, Pisa', '3365544332', 'laura.ricci@riccigroup.it', 'Ricci Group S.p.A.', '5f4dcc3b5aa765d61d8327deb882cf99'),
+(6, 'Matteo', 'Bianchi', 'Via Trieste 18, Trieste', '3394433221', 'matteo.bianchi@mblogistics.it', 'MB Logistics', '5f4dcc3b5aa765d61d8327deb882cf99');
 
 -- --------------------------------------------------------
 
