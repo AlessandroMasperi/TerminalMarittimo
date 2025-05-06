@@ -11,7 +11,7 @@ public class FornitoreDAO {
     public void inserisciFornitore(String nome, String cognome, String indirizzo, String telefono,String email, String nomeAzienda, String password) throws SQLException {
         try (Connection conn = DriverManager.getConnection(database.URL, database.USER, database.PASSWORD)) 
         {
-            String sql = "INSERT INTO fornitori (nome, cognome, indirizzo, telefono, email, nomeAzienda, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO fornitore (nome, cognome, indirizzo, telefono, email, nomeAzienda, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, nome);
             stmt.setString(2, cognome);
@@ -33,7 +33,7 @@ public class FornitoreDAO {
         ArrayList<Fornitore> lista = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(database.URL, database.USER, database.PASSWORD)) 
         {
-            String sql = "SELECT * FROM fornitori";
+            String sql = "SELECT * FROM fornitore";
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) 
@@ -51,12 +51,28 @@ public class FornitoreDAO {
     {
         try (Connection conn = DriverManager.getConnection(database.URL, database.USER, database.PASSWORD)) 
         {
-            String sql = "DELETE FROM fornitori WHERE id = ?";
+            String sql = "DELETE FROM fornitore WHERE id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public boolean verificaCredenziali(String username, String password) 
+    {
+        try (Connection conn = DriverManager.getConnection(database.URL, database.USER, database.PASSWORD)) 
+        {
+            String sql = "SELECT * FROM fornitore WHERE email = ? AND password = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
