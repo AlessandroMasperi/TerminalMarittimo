@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 06, 2025 alle 18:50
+-- Creato il: Mag 06, 2025 alle 22:24
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.2.12
 
@@ -20,6 +20,25 @@ SET time_zone = "+00:00";
 --
 -- Database: `terminal_marittimo`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `admin`
+--
+
+CREATE TABLE `admin` (
+  `id` int(11) NOT NULL,
+  `username` varchar(32) NOT NULL,
+  `password` varchar(32) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dump dei dati per la tabella `admin`
+--
+
+INSERT INTO `admin` (`id`, `username`, `password`) VALUES
+(1, 'admin', '5f4dcc3b5aa765d61d8327deb882cf99');
 
 -- --------------------------------------------------------
 
@@ -260,6 +279,25 @@ INSERT INTO `navi` (`id`, `nome`, `anno_produzione`, `tipologia`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `operatori`
+--
+
+CREATE TABLE `operatori` (
+  `id` int(11) NOT NULL,
+  `username` varchar(32) NOT NULL,
+  `password` varchar(32) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dump dei dati per la tabella `operatori`
+--
+
+INSERT INTO `operatori` (`id`, `username`, `password`) VALUES
+(1, 'operator1', '5f4dcc3b5aa765d61d8327deb882cf99');
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `polizza_carico`
 --
 
@@ -385,10 +423,17 @@ INSERT INTO `viaggi` (`id`, `id_nave`, `linea`, `dt_partenza`, `dt_arrivo`) VALU
 --
 
 --
+-- Indici per le tabelle `admin`
+--
+ALTER TABLE `admin`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indici per le tabelle `autisti`
 --
 ALTER TABLE `autisti`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `patente` (`patente`);
 
 --
 -- Indici per le tabelle `buoni_consegna`
@@ -447,6 +492,12 @@ ALTER TABLE `navi`
   ADD KEY `tipologia` (`tipologia`);
 
 --
+-- Indici per le tabelle `operatori`
+--
+ALTER TABLE `operatori`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indici per le tabelle `polizza_carico`
 --
 ALTER TABLE `polizza_carico`
@@ -479,6 +530,12 @@ ALTER TABLE `viaggi`
 --
 -- AUTO_INCREMENT per le tabelle scaricate
 --
+
+--
+-- AUTO_INCREMENT per la tabella `admin`
+--
+ALTER TABLE `admin`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT per la tabella `autisti`
@@ -527,6 +584,12 @@ ALTER TABLE `merci`
 --
 ALTER TABLE `navi`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT per la tabella `operatori`
+--
+ALTER TABLE `operatori`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT per la tabella `polizza_carico`
