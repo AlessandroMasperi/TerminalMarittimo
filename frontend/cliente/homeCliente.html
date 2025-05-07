@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <title>Home Cliente</title>
+        <script src="../scriptComune.js"></script>
+        <script>
+            function vaiAGestioneAutisti() {
+                window.location.href = "gestioneAutisti.html";
+            }
+        </script>
+    </head>
+
+    <body onload="controllaAutenticazione('Cliente')">
+
+        <h1>Benvenuto, Cliente</h1>
+
+        <button onclick="vaiAGestioneAutisti()">Gestione Autisti</button>
+        <button onclick="logout()">Logout</button>
+    </body>
+</html>

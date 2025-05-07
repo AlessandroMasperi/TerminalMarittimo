@@ -1,40 +1,72 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <script>
-      function eseguiLogin() {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-        const passwordHash = CryptoJS.MD5(password).toString();
 
-        const url = `http://localhost:8080/login?username=${username}&password=${passwordHash}`;
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    function controllaAutenticazioneRedirect() {
+      const utenteJSON = sessionStorage.getItem("utente");
 
-        fetch(url)
-          .then(response => response.json())
-          .then(data => {
-            if (data.ruolo !== "null") {
-              document.getElementById("messaggio").innerText = `Login riuscito come ${data.ruolo}`;
-            } else {
-              document.getElementById("messaggio").innerText = "Credenziali errate";
-            }
-          })
-          .catch(error => {
-            console.error("Errore durante la richiesta:", error);
-            document.getElementById("messaggio").innerText = "Errore di connessione al server.";
-          });
+      if (utenteJSON) {
+        const utente = JSON.parse(utenteJSON);
+        const redirectMap = {
+          "Autista": "autista/homeAutista.html",
+          "Cliente": "cliente/homeCliente.html",
+          "Fornitore": "fornitore/homeFornitore.html",
+          "Operatore": "operatore/homeOperatore.html",
+          "Admin": "admin/homeAdmin.html"
+        };
+
+        const redirectURL = redirectMap[utente.ruolo];
+
+        if (redirectURL) {
+          window.location.href = redirectURL;
+          return true;
+        } else {
+          document.getElementById("messaggio").innerText = "Ruolo non riconosciuto";
+          return false;
+        }
       }
-    </script>
-  </head>
-  <body>
-    <h2>Login</h2>
-    <form id="loginForm">
-      <label>Username: <input type="text" id="username"></label><br>
-      <label>Password: <input type="password" id="password"></label><br>
-      <button type="button" onclick="eseguiLogin()">Login</button>
-    </form>
-    <p id="messaggio"></p>
-  </body>
+      return false;
+    }
+
+    function eseguiLogin() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const passwordHash = CryptoJS.MD5(password).toString();
+
+      const url = `http://localhost:8080/login?username=${username}&password=${passwordHash}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.ruolo !== "null") {
+            sessionStorage.setItem("utente", JSON.stringify(data));
+            let tmp = controllaAutenticazioneRedirect();
+            if (!tmp)
+              document.getElementById("messaggio").innerText = "Ruolo non riconosciuto";
+          } else {
+            document.getElementById("messaggio").innerText = "Credenziali errate";
+          }
+        })
+        .catch(error => {
+          console.error("Errore durante la richiesta:", error);
+          document.getElementById("messaggio").innerText = "Errore di connessione al server.";
+        });
+    }
+  </script>
+</head>
+
+<body onload="controllaAutenticazioneRedirect()">
+  <h2>Login</h2>
+  <form id="loginForm">
+    <label>Username: <input type="text" id="username"></label><br>
+    <label>Password: <input type="password" id="password"></label><br>
+    <button type="button" onclick="eseguiLogin()">Login</button>
+  </form>
+  <p id="messaggio"></p>
+</body>
+
 </html>

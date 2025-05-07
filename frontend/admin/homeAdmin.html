@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Home Admin</title>
+  <script src="../scriptComune.js"></script>
+  <script>
+    function vaiAGestioneOperatori() 
+    {
+      window.location.href = "gestioneOperatori.html";
+    }
+  </script>
+</head>
+<body onload="controllaAutenticazione('Admin')">
+
+  <h1>Benvenuto, Admin</h1>
+
+  <button onclick="vaiAGestioneOperatori()">Gestione Operatori</button>
+  <button onclick="logout()">Logout</button>
+</body>
+</html>

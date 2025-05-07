@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <title>Home Operatore</title>
+        <script src="../scriptComune.js"></script>
+        <script>
+            function vaiAGestioneClienti() {
+                window.location.href = "gestioneClienti.html";
+            }
+            function vaiAGestioneFornitori() {
+                window.location.href = "gestioneFornitori.html";
+            }
+        </script>
+    </head>
+
+    <body onload="controllaAutenticazione('Operatore')">
+
+        <h1>Benvenuto, Operatore</h1>
+
+        <button onclick="vaiAGestioneClienti()">Gestione Clienti</button>
+        <button onclick="vaiAGestioneFornitori()">Gestione Fornitori</button>
+        <button onclick="logout()">Logout</button>
+    </body>
+</html>

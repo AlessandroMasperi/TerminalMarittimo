@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Fornitori</title>
+    <script src="../scriptComune.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        function caricamento() {
+            controllaAutenticazione('Operatore');
+            caricaFornitori();
+        }
+
+        function tornaIndietro() {
+            window.location.href = "homeOperatore.html";
+        }
+
+        function inserisciFornitore() {
+            const nome = document.getElementById("nome").value;
+            const cognome = document.getElementById("cognome").value;
+            const email = document.getElementById("email").value;
+            const indirizzo = document.getElementById("indirizzo").value;
+            const telefono = document.getElementById("telefono").value;
+            const nomeAzienda = document.getElementById("nomeAzienda").value;
+            const password = document.getElementById("password").value;
+            const passwordHash = CryptoJS.MD5(password).toString();
+
+            fetch(`http://localhost:8080/gestioneFornitori/inserisci?nome=${nome}&cognome=${cognome}&email=${email}&indirizzo=${indirizzo}&telefono=${telefono}&nomeAzienda=${nomeAzienda}&password=${passwordHash}`)
+                .then(res => res.text())
+                .then(msg => {
+                    alert("Fornitore inserito.");
+                    document.getElementById("formFornitore").reset();
+                    caricaFornitori();
+                });
+        }
+
+        function caricaFornitori() {
+            fetch("http://localhost:8080/gestioneFornitori/tutti")
+                .then(res => res.json())
+                .then(fornitori => {
+                    const tabella = document.getElementById("tabellaFornitori");
+
+                    tabellaFornitori.innerHTML = "";
+                    const rigaIntestazioneFornitori = document.createElement("tr");
+                    const intestazioneIDFornitore = document.createElement("th");
+                    intestazioneIDFornitore.textContent = 'ID';
+                    rigaIntestazioneFornitori.appendChild(intestazioneIDFornitore);
+                    const intestazioneNomeFornitore = document.createElement("th");
+                    intestazioneNomeFornitore.textContent = 'Nome';
+                    rigaIntestazioneFornitori.appendChild(intestazioneNomeFornitore);
+                    const intestazioneCognomeFornitore = document.createElement("th");
+                    intestazioneCognomeFornitore.textContent = 'Cognome';
+                    rigaIntestazioneFornitori.appendChild(intestazioneCognomeFornitore);
+                    const intestazioneEmailFornitore = document.createElement("th");
+                    intestazioneEmailFornitore.textContent = 'Email';
+                    rigaIntestazioneFornitori.appendChild(intestazioneEmailFornitore);
+                    const intestazioneIndirizzoFornitore = document.createElement("th");
+                    intestazioneIndirizzoFornitore.textContent = 'Indirizzo';
+                    rigaIntestazioneFornitori.appendChild(intestazioneIndirizzoFornitore);
+                    const intestazioneTelefonoFornitore = document.createElement("th");
+                    intestazioneTelefonoFornitore.textContent = 'Telefono';
+                    rigaIntestazioneFornitori.appendChild(intestazioneTelefonoFornitore);
+                    const intestazioneNomeAziendaFornitore = document.createElement("th");
+                    intestazioneNomeAziendaFornitore.textContent = 'Nome Azienda';
+                    rigaIntestazioneFornitori.appendChild(intestazioneNomeAziendaFornitore);
+                    const intestazioneEliminaFornitore = document.createElement("th");
+                    intestazioneEliminaFornitore.textContent = 'Elimina';
+                    rigaIntestazioneFornitori.appendChild(intestazioneEliminaFornitore);
+                    tabellaFornitori.appendChild(rigaIntestazioneFornitori);
+
+
+                    fornitori.forEach(fornitore => {
+                        const rigaFornitore = document.createElement("tr");
+
+                        const idCellFornitore = document.createElement("td");
+                        idCellFornitore.textContent = fornitore.id;
+                        rigaFornitore.appendChild(idCellFornitore);
+
+                        const nomeCellFornitore = document.createElement("td");
+                        nomeCellFornitore.textContent = fornitore.nome;
+                        rigaFornitore.appendChild(nomeCellFornitore);
+
+                        const cognomeCellFornitore = document.createElement("td");
+                        cognomeCellFornitore.textContent = fornitore.cognome;
+                        rigaFornitore.appendChild(cognomeCellFornitore);
+
+                        const emailCellFornitore = document.createElement("td");
+                        emailCellFornitore.textContent = fornitore.email;
+                        rigaFornitore.appendChild(emailCellFornitore);
+
+                        const indirizzoCellFornitore = document.createElement("td");
+                        indirizzoCellFornitore.textContent = fornitore.indirizzo;
+                        rigaFornitore.appendChild(indirizzoCellFornitore);
+
+                        const telefonoCellFornitore = document.createElement("td");
+                        telefonoCellFornitore.textContent = fornitore.telefono;
+                        rigaFornitore.appendChild(telefonoCellFornitore);
+
+                        const nomeAziendaCellFornitore = document.createElement("td");
+                        nomeAziendaCellFornitore.textContent = fornitore.nomeAzienda;
+                        rigaFornitore.appendChild(nomeAziendaCellFornitore);
+
+                        const eliminaCellFornitore = document.createElement("td");
+                        const eliminaBtnFornitore = document.createElement("button");
+                        eliminaBtnFornitore.textContent = "Elimina";
+                        eliminaBtnFornitore.addEventListener("click", () => eliminaFornitore(fornitore.id));
+                        eliminaCellFornitore.appendChild(eliminaBtnFornitore);
+                        rigaFornitore.appendChild(eliminaCellFornitore);
+
+                        rigaFornitore.append(
+                            idCellFornitore,
+                            nomeCellFornitore,
+                            cognomeCellFornitore,
+                            emailCellFornitore,
+                            indirizzoCellFornitore,
+                            telefonoCellFornitore,
+                            nomeAziendaCellFornitore,
+                            eliminaCellFornitore
+                        );
+
+                        tabellaFornitori.appendChild(rigaFornitore);
+                    });
+
+                });
+        }
+
+        function eliminaFornitore(id) {
+            if (confirm("Sei sicuro di voler eliminare il fornitore?")) {
+                fetch(`http://localhost:8080/gestioneFornitori/elimina?id=${id}`)
+                    .then(res => res.text())
+                    .then(() => {
+                        alert("Fornitore eliminato.");
+                        caricaFornitori();
+                    });
+            }
+        }
+    </script>
+</head>
+
+<body onload="caricamento()">
+    <h1>Gestione Fornitori</h1>
+    <button onclick="tornaIndietro()">Torna home</button>
+
+    <h2>Inserisci Nuovo Fornitore</h2>
+    <form id="formFornitore">
+        Nome: <input type="text" id="nome" required><br>
+        Cognome: <input type="text" id="cognome" required><br>
+        Email: <input type="email" id="email" required><br>
+        Indirizzo: <input type="text" id="indirizzo" required><br>
+        Telefono: <input type="tel" id="telefono" required><br>
+        Nome Azienda: <input type="text" id="nomeAzienda" required><br>
+        Password: <input type="password" id="password" required><br>
+        <button type="submit" onclick="event.preventDefault(); inserisciFornitore()">Inserisci</button>
+    </form>
+
+    <h2>Lista Fornitori</h2>
+    <table id="tabellaFornitori"></table>
+</body>
+
+</html>

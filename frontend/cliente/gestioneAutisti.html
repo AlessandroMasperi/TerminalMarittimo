@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Autisti</title>
+    <script src="../scriptComune.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        function caricamento() {
+            controllaAutenticazione('Cliente');
+            caricaAutisti();
+        }
+
+        function tornaIndietro()
+        {
+            window.location.href = "homeCliente.html";
+        }
+
+        function inserisciAutista() {
+            const nome = document.getElementById("nome").value;
+            const cognome = document.getElementById("cognome").value;
+            const patente = document.getElementById("patente").value;
+            const password = document.getElementById("password").value;
+            const passwordHash = CryptoJS.MD5(password).toString();
+
+            fetch(`http://localhost:8080/gestioneAutisti/inserisci?nome=${nome}&cognome=${cognome}&patente=${patente}&password=${passwordHash}`)
+                .then(res => res.text())
+                .then(msg => {
+                    alert("Autista inserito.");
+                    document.getElementById("formAutista").reset();
+                    caricaAutisti();
+                });
+        }
+
+        function caricaAutisti() {
+            fetch("http://localhost:8080/gestioneAutisti/tutti")
+                .then(res => res.json())
+                .then(autisti => {
+                    const tabella = document.getElementById("tabellaAutisti");
+
+                    tabella.innerHTML = "";
+                    const rigaIntestazione = document.createElement("tr");
+                    const intestazioneID = document.createElement("th");
+                    intestazioneID.textContent = 'ID';
+                    rigaIntestazione.appendChild(intestazioneID);
+                    const intestazioneNome = document.createElement("th");
+                    intestazioneNome.textContent = 'Nome';
+                    rigaIntestazione.appendChild(intestazioneNome);
+                    const intestazioneCognome = document.createElement("th");
+                    intestazioneCognome.textContent = 'Cognome';
+                    rigaIntestazione.appendChild(intestazioneCognome);
+                    const intestazionePatente = document.createElement("th");
+                    intestazionePatente.textContent = 'Patente';
+                    rigaIntestazione.appendChild(intestazionePatente);
+                    const intestazioneElimina = document.createElement("th");
+                    intestazioneElimina.textContent = 'Elimina';
+                    rigaIntestazione.appendChild(intestazioneElimina);
+                    tabella.appendChild(rigaIntestazione);
+
+                    autisti.forEach(autista => {
+                        const riga = document.createElement("tr");
+
+                        const idCell = document.createElement("td");
+                        idCell.textContent = autista.id;
+
+                        const nomeCell = document.createElement("td");
+                        nomeCell.textContent = autista.nome;
+
+                        const cognomeCell = document.createElement("td");
+                        cognomeCell.textContent = autista.cognome;
+
+                        const patenteCell = document.createElement("td");
+                        patenteCell.textContent = autista.patente;
+
+                        const eliminaCell = document.createElement("td");
+                        const eliminaBtn = document.createElement("button");
+                        eliminaBtn.textContent = "Elimina";
+                        eliminaBtn.addEventListener("click", () => eliminaAutista(autista.id));
+                        eliminaCell.appendChild(eliminaBtn);
+
+                        riga.append(idCell, nomeCell, cognomeCell, patenteCell, eliminaCell);
+                        tabella.appendChild(riga);
+                    });
+                });
+        }
+
+        function eliminaAutista(id) {
+            if (confirm("Sei sicuro di voler eliminare l'autista?")) {
+                fetch(`http://localhost:8080/gestioneAutisti/elimina?id=${id}`)
+                    .then(res => res.text())
+                    .then(() => {
+                        alert("Autista eliminato.");
+                        caricaAutisti();
+                    });
+            }
+        }
+    </script>
+</head>
+
+<body onload="caricamento()">
+    <h1>Gestione Autisti</h1>
+    <button onclick="tornaIndietro()">Torna home</button>
+    
+    <h2>Inserisci Nuovo Autista</h2>
+    <form id="formAutista">
+        Nome: <input type="text" id="nome" required>
+        Cognome: <input type="text" id="cognome" required>
+        Patente: <input type="text" id="patente" maxlength="10" required>
+        Password: <input type="password" id="password" required>
+        <button type="submit" onclick="inserisciAutista()">Inserisci</button>
+    </form>
+
+    <h2>Lista Autisti</h2>
+    <table id="tabellaAutisti">
+    </table>
+</body>
+
+</html>
