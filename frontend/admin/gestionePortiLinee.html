@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Porti e Linee</title>
+    <script src="../scriptComune.js"></script>
+    <script>
+        function caricamento() {
+            controllaAutenticazione('Admin');
+            caricaPorti();
+            caricaLinee();
+        }
+
+        function tornaIndietro() {
+            window.location.href = "homeAdmin.html";
+        }
+
+        function inserisciPorto() {
+            const porto = document.getElementById("porto").value;
+            const nazione = document.getElementById("nazione").value;
+
+            if (porto.trim() === "" || nazione.trim() === "") {
+                alert("Compila tutti i campi.");
+                return;
+            }
+
+            fetch(`http://localhost:8080/gestionePorti/inserisciPorto?porto=${porto}&nazione=${nazione}`)
+                .then(res => res.text())
+                .then(() => {
+                    alert("Porto inserito.");
+                    document.getElementById("formPorto").reset();
+                    caricaPorti();
+                });
+        }
+
+        function eliminaPorto(id) {
+            if (confirm("Sei sicuro di voler eliminare il porto?")) {
+                fetch(`http://localhost:8080/gestionePorti/eliminaPorto?id=${id}`)
+                    .then(res => res.text())
+                    .then(() => {
+                        alert("Porto eliminato.");
+                        caricaPorti();
+                    });
+            }
+        }
+
+        function caricaPorti() {
+            fetch("http://localhost:8080/gestionePorti/tuttiPorto")
+                .then(res => res.json())
+                .then(porti => {
+                    const tabella = document.getElementById("tabellaPorti");
+                    tabella.innerHTML = "";
+
+                    const intestazione = document.createElement("tr");
+                    const thId = document.createElement("th");
+                    thId.textContent = "ID";
+                    const thPorto = document.createElement("th");
+                    thPorto.textContent = "Porto";
+                    const thNazione = document.createElement("th");
+                    thNazione.textContent = "Nazione";
+                    const thElimina = document.createElement("th");
+                    thElimina.textContent = "Elimina";
+
+                    intestazione.append(thId, thPorto, thNazione, thElimina);
+                    tabella.appendChild(intestazione);
+
+                    const selectPartenza = document.getElementById("partenza");
+                    const selectDestinazione = document.getElementById("destinazione");
+                    selectPartenza.innerHTML = "";
+                    selectDestinazione.innerHTML = "";
+
+                    porti.forEach(p => {
+                        const riga = document.createElement("tr");
+
+                        const idCell = document.createElement("td");
+                        idCell.textContent = p.id;
+
+                        const portoCell = document.createElement("td");
+                        portoCell.textContent = p.porto;
+
+                        const nazioneCell = document.createElement("td");
+                        nazioneCell.textContent = p.nazione;
+
+                        const eliminaCell = document.createElement("td");
+                        const eliminaButton = document.createElement("button");
+                        eliminaButton.textContent = "Elimina";
+                        eliminaButton.addEventListener("click", () => {
+                            eliminaPorto(p.id);
+                        });
+                        eliminaCell.appendChild(eliminaButton);
+
+                        riga.append(idCell, portoCell, nazioneCell, eliminaCell);
+                        tabella.appendChild(riga);
+
+                        const op1 = document.createElement("option");
+                        op1.value = p.id;
+                        op1.textContent = `${p.porto} (${p.nazione})`;
+
+                        const op2 = document.createElement("option");
+                        op2.value = p.id;
+                        op2.textContent = `${p.porto} (${p.nazione})`;
+
+                        selectPartenza.add(op1);
+                        selectDestinazione.add(op2);
+                    });
+                });
+        }
+
+
+        function inserisciLinea() {
+            const nome = document.getElementById("nomeLinea").value;
+            const idPartenza = document.getElementById("partenza").value;
+            const idDestinazione = document.getElementById("destinazione").value;
+
+            if (nome.trim() === "") {
+                alert("Inserisci il nome della linea.");
+                return;
+            }
+
+            if (idPartenza === idDestinazione) {
+                alert("Partenza e destinazione devono essere diversi.");
+                return;
+            }
+
+            fetch(`http://localhost:8080/gestionePorti/inserisciLinea?nome=${nome}&idPartenza=${idPartenza}&idDestinazione=${idDestinazione}`)
+                .then(res => res.text())
+                .then(() => {
+                    alert("Linea inserita.");
+                    document.getElementById("formLinea").reset();
+                    caricaLinee();
+                });
+        }
+
+        function eliminaLinea(id) {
+            if (confirm("Sei sicuro di voler eliminare la linea?")) {
+                fetch(`http://localhost:8080/gestionePorti/eliminaLinea?id=${id}`)
+                    .then(res => res.text())
+                    .then(() => {
+                        alert("Linea eliminata.");
+                        caricaLinee();
+                    });
+            }
+        }
+
+        function caricaLinee() {
+            fetch("http://localhost:8080/gestionePorti/tutteLinea")
+                .then(res => res.json())
+                .then(linee => {
+                    const tabella = document.getElementById("tabellaLinee");
+                    tabella.innerHTML = "";
+
+                    const intestazione = document.createElement("tr");
+                    const thId = document.createElement("th");
+                    thId.textContent = "ID";
+                    const thNome = document.createElement("th");
+                    thNome.textContent = "Nome";
+                    const thPartenza = document.createElement("th");
+                    thPartenza.textContent = "Partenza";
+                    const thDestinazione = document.createElement("th");
+                    thDestinazione.textContent = "Destinazione";
+                    const thElimina = document.createElement("th");
+                    thElimina.textContent = "Elimina";
+
+                    intestazione.append(thId, thNome, thPartenza, thDestinazione, thElimina);
+                    tabella.appendChild(intestazione);
+
+                    linee.forEach(l => {
+                        const riga = document.createElement("tr");
+
+                        const idCell = document.createElement("td");
+                        idCell.textContent = l.id;
+
+                        const nomeCell = document.createElement("td");
+                        nomeCell.textContent = l.nome;
+
+                        const partenzaCell = document.createElement("td");
+                        partenzaCell.textContent = `${l.porto_partenza.porto} (${l.porto_partenza.nazione})`;
+
+                        const destinazioneCell = document.createElement("td");
+                        destinazioneCell.textContent = `${l.porto_destinazione.porto} (${l.porto_destinazione.nazione})`;
+
+                        const eliminaCell = document.createElement("td");
+                        const eliminaButton = document.createElement("button");
+                        eliminaButton.textContent = "Elimina";
+                        eliminaButton.addEventListener("click", () => {
+                            eliminaLinea(l.id);
+                        });
+                        eliminaCell.appendChild(eliminaButton);
+
+                        riga.append(idCell, nomeCell, partenzaCell, destinazioneCell, eliminaCell);
+                        tabella.appendChild(riga);
+                    });
+                });
+        }
+
+
+    </script>
+</head>
+
+<body onload="caricamento()">
+    <h1>Gestione Porti e Linee</h1>
+    <button onclick="tornaIndietro()">Torna Home</button>
+
+    <h2>Inserisci Porto</h2>
+    <form id="formPorto">
+        Nome Porto: <input type="text" id="porto" required>
+        Nazione: <input type="text" id="nazione" required>
+        <button type="button" onclick="inserisciPorto()">Inserisci</button>
+    </form>
+
+    <h3>Elenco Porti</h3>
+    <table id="tabellaPorti"></table>
+
+    <h2>Inserisci Linea</h2>
+    <form id="formLinea">
+        Nome Linea: <input type="text" id="nomeLinea" required><br>
+        Porto di Partenza:
+        <select id="partenza"></select><br>
+        Porto di destinazione:
+        <select id="destinazione" disabled>
+            <option value="1">Genova (Italia)</option>
+        </select>
+        <button type="button" onclick="inserisciLinea()">Inserisci Linea</button>
+    </form>
+
+    <h3>Elenco Linee</h3>
+    <table id="tabellaLinee"></table>
+</body>
+
+</html>

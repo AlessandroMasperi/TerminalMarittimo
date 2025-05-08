@@ -21,16 +21,14 @@
       const password = document.getElementById("password").value;
       const passwordHash = CryptoJS.MD5(password).toString();
 
-      if (username.trim() === "") 
-      {
-          alert("L'username è obbligatorio.");
-          return;
+      if (username.trim() === "") {
+        alert("L'username è obbligatorio.");
+        return;
       }
 
-      if (password.trim() === "") 
-      {
-          alert("La password è obbligatoria.");
-          return;
+      if (password.trim() === "") {
+        alert("La password è obbligatoria.");
+        return;
       }
 
       fetch(`http://localhost:8080/gestioneOperatori/inserisci?username=${username}&password=${passwordHash}`)
