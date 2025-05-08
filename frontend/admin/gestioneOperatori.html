@@ -1,81 +1,89 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <title>Gestione Operatori</title>
   <script src="../scriptComune.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    function caricamento()
-    {
-        controllaAutenticazione('Admin');
-        caricaOperatori();
+    function caricamento() {
+      controllaAutenticazione('Admin');
+      caricaOperatori();
     }
 
-    function tornaIndietro()
-    {
-        window.location.href = "homeAdmin.html";
+    function tornaIndietro() {
+      window.location.href = "homeAdmin.html";
     }
 
-    function inserisciOperatore() 
-    {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-        const passwordHash = CryptoJS.MD5(password).toString();
+    function inserisciOperatore() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const passwordHash = CryptoJS.MD5(password).toString();
 
-        fetch(`http://localhost:8080/gestioneOperatori/inserisci?username=${username}&password=${passwordHash}`)
-            .then(res => res.text())
-            .then(msg => {
-            alert("Operatore inserito.");
-            document.getElementById("formOperatore").reset();
-            caricaOperatori();
-            });
-    }
+      if (username.trim() === "") 
+      {
+          alert("L'username è obbligatorio.");
+          return;
+      }
 
-    function caricaOperatori() 
-    {
-        fetch("http://localhost:8080/gestioneOperatori/tutti")
-            .then(res => res.json())
-            .then(operatori => {
-            const tabella = document.getElementById("tabellaOperatori");
-            tabella.innerHTML = "";
+      if (password.trim() === "") 
+      {
+          alert("La password è obbligatoria.");
+          return;
+      }
 
-            const riga = document.createElement("tr");
-            const intestazione1 = document.createElement("th");
-            intestazione1.textContent = 'ID';
-            const intestazione2 = document.createElement("th");
-            intestazione2.textContent = 'Username';
-            const intestazione3 = document.createElement("th");
-            intestazione3.textContent = 'Elimina';
-            riga.append(intestazione1, intestazione2, intestazione3);
-            tabella.appendChild(riga);
-
-            operatori.forEach(operatore => {
-                const riga = document.createElement("tr");
-
-                const idCell = document.createElement("td");
-                idCell.textContent = operatore.id;
-
-                const usernameCell = document.createElement("td");
-                usernameCell.textContent = operatore.username;
-
-                const eliminaCell = document.createElement("td");
-                const eliminaButton = document.createElement("button");
-                eliminaButton.textContent = "Elimina";
-                eliminaButton.addEventListener("click", () => {
-                    eliminaOperatore(operatore.id);
-                });
-
-                eliminaCell.appendChild(eliminaButton);
-
-                riga.append(idCell, usernameCell, eliminaCell);
-                tabella.appendChild(riga);
-            });
+      fetch(`http://localhost:8080/gestioneOperatori/inserisci?username=${username}&password=${passwordHash}`)
+        .then(res => res.text())
+        .then(msg => {
+          alert("Operatore inserito.");
+          document.getElementById("formOperatore").reset();
+          caricaOperatori();
         });
     }
 
-    function eliminaOperatore(id) 
-    {
+    function caricaOperatori() {
+      fetch("http://localhost:8080/gestioneOperatori/tutti")
+        .then(res => res.json())
+        .then(operatori => {
+          const tabella = document.getElementById("tabellaOperatori");
+          tabella.innerHTML = "";
+
+          const riga = document.createElement("tr");
+          const intestazione1 = document.createElement("th");
+          intestazione1.textContent = 'ID';
+          const intestazione2 = document.createElement("th");
+          intestazione2.textContent = 'Username';
+          const intestazione3 = document.createElement("th");
+          intestazione3.textContent = 'Elimina';
+          riga.append(intestazione1, intestazione2, intestazione3);
+          tabella.appendChild(riga);
+
+          operatori.forEach(operatore => {
+            const riga = document.createElement("tr");
+
+            const idCell = document.createElement("td");
+            idCell.textContent = operatore.id;
+
+            const usernameCell = document.createElement("td");
+            usernameCell.textContent = operatore.username;
+
+            const eliminaCell = document.createElement("td");
+            const eliminaButton = document.createElement("button");
+            eliminaButton.textContent = "Elimina";
+            eliminaButton.addEventListener("click", () => {
+              eliminaOperatore(operatore.id);
+            });
+
+            eliminaCell.appendChild(eliminaButton);
+
+            riga.append(idCell, usernameCell, eliminaCell);
+            tabella.appendChild(riga);
+          });
+        });
+    }
+
+    function eliminaOperatore(id) {
       if (confirm("Sei sicuro di voler eliminare l'operatore?")) {
         fetch(`http://localhost:8080/gestioneOperatori/elimina?id=${id}`)
           .then(res => res.text())
@@ -87,6 +95,7 @@
     }
   </script>
 </head>
+
 <body onload="caricamento()">
 
   <h1>Gestione Operatori</h1>
@@ -104,4 +113,5 @@
 
   </table>
 </body>
+
 </html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Navi</title>
+    <script src="../scriptComune.js"></script>
+    <script>
+        function caricamento() {
+            controllaAutenticazione('Admin');
+            caricaNavi();
+            caricaTipologie();
+        }
+
+        function tornaIndietro() {
+            window.location.href = "homeAdmin.html";
+        }
+
+        function inserisciNave() 
+        {
+            const nome = document.getElementById("nome").value;
+            const annoProduzione = document.getElementById("anno").value;
+            const idTipologia = document.getElementById("tipologia").value;
+
+            if (nome.trim() === "") {
+                alert("Il nome della nave è obbligatorio.");
+                return;
+            }
+
+            if (isNaN(annoProduzione) || annoProduzione.trim() === "") {
+                alert("L'anno di produzione è obbligatorio");
+                return;
+            }
+
+            if (!idTipologia) {
+                alert("Devi selezionare una tipologia.");
+                return;
+            }
+
+            fetch(`http://localhost:8080/gestioneNavi/inserisci?nome=${nome}&annoProduzione=${annoProduzione}&idTipologia=${idTipologia}`)
+                .then(res => res.text())
+                .then(msg => {
+                    alert("Nave inserita.");
+                    document.getElementById("formNave").reset();
+                    caricaNavi();
+                });
+        }
+
+        function caricaNavi() {
+            fetch("http://localhost:8080/gestioneNavi/tutte")
+                .then(res => res.json())
+                .then(navi => {
+                    const tabella = document.getElementById("tabellaNavi");
+
+                    tabella.innerHTML = "";
+                    const riga = document.createElement("tr");
+                    const intestazione1 = document.createElement("th");
+                    intestazione1.textContent = 'ID';
+                    const intestazione2 = document.createElement("th");
+                    intestazione2.textContent = 'Nome';
+                    const intestazione3 = document.createElement("th");
+                    intestazione3.textContent = 'Anno Produzione';
+                    const intestazione4 = document.createElement("th");
+                    intestazione4.textContent = 'Tipologia';
+                    const intestazione5 = document.createElement("th");
+                    intestazione5.textContent = 'Elimina';
+                    riga.append(intestazione1, intestazione2, intestazione3, intestazione4, intestazione5);
+                    tabella.appendChild(riga);
+
+                    navi.forEach(nave => {
+                        const riga = document.createElement("tr");
+
+                        const idCell = document.createElement("td");
+                        idCell.textContent = nave.id;
+
+                        const nomeCell = document.createElement("td");
+                        nomeCell.textContent = nave.nome;
+
+                        const annoCell = document.createElement("td");
+                        annoCell.textContent = nave.annoProduzione;
+
+                        const tipoCell = document.createElement("td");
+                        tipoCell.textContent = nave.tipologia;
+
+                        const eliminaCell = document.createElement("td");
+                        const btn = document.createElement("button");
+                        btn.textContent = "Elimina";
+                        btn.addEventListener("click", () => eliminaNave(nave.id));
+                        eliminaCell.appendChild(btn);
+
+                        riga.append(idCell, nomeCell, annoCell, tipoCell, eliminaCell);
+                        tabella.appendChild(riga);
+                    });
+                });
+        }
+
+        function caricaTipologie() {
+            fetch("http://localhost:8080/gestioneNavi/tipologie")
+                .then(res => res.json())
+                .then(tipologie => {
+                    const select = document.getElementById("tipologia");
+                    select.innerHTML = "";
+                    tipologie.forEach(tipol => {
+                        const option = document.createElement("option");
+                        option.value = tipol.id;
+                        option.textContent = tipol.nome;
+                        select.appendChild(option);
+                    });
+                });
+        }
+
+        function eliminaNave(id) {
+            if (confirm("Sei sicuro di voler eliminare questa nave?")) {
+                fetch(`http://localhost:8080/gestioneNavi/elimina?id=${id}`)
+                    .then(res => res.text())
+                    .then(() => {
+                        alert("Nave eliminata.");
+                        caricaNavi();
+                    });
+            }
+        }
+    </script>
+</head>
+
+<body onload="caricamento()">
+    <h1>Gestione Navi</h1>
+    <button onclick="tornaIndietro()">Torna home</button>
+
+    <h2>Inserisci Nuova Nave</h2>
+    <form id="formNave">
+        Nome: <input type="text" id="nome" required>
+        Anno Produzione: <input type="number" id="anno" min="1950" max="2025" required>
+        Tipologia:
+        <select id="tipologia" required></select>
+        <button type="submit" onclick="inserisciNave()">Inserisci</button>
+    </form>
+
+    <h2>Lista Navi</h2>
+    <table id="tabellaNavi"></table>
+</body>
+
+</html>

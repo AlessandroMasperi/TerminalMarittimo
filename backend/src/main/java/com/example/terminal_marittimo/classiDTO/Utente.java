@@ -11,11 +11,11 @@ public class Utente
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public String getRuolo() {
-        return ruolo;
+        return this.ruolo;
     }
 }
 

@@ -26,6 +26,26 @@
             const password = document.getElementById("password").value;
             const passwordHash = CryptoJS.MD5(password).toString();
 
+            if (nome.trim() === "") {
+                alert("Il nome è obbligatorio.");
+                return;
+            }
+
+            if (cognome.trim() === "") {
+                alert("Il cognome è obbligatorio.");
+                return;
+            }
+
+            if (email.trim() === "") {
+                alert("La mail è obbligatoria.");
+                return;
+            }
+
+            if (password.trim() === "") {
+                alert("La password è obbligatoria.");
+                return;
+            }
+
             fetch(`http://localhost:8080/gestioneClienti/inserisci?nome=${nome}&cognome=${cognome}&email=${email}&indirizzo=${indirizzo}&telefono=${telefono}&nomeAzienda=${nomeAzienda}&password=${passwordHash}`)
                 .then(res => res.text())
                 .then(msg => {
@@ -135,9 +155,9 @@
         Nome: <input type="text" id="nome" required><br>
         Cognome: <input type="text" id="cognome" required><br>
         Email: <input type="email" id="email" required><br>
-        Indirizzo: <input type="text" id="indirizzo" required><br>
-        Telefono: <input type="tel" id="telefono" required><br>
-        Nome Azienda: <input type="text" id="nomeAzienda" required><br>
+        Indirizzo: <input type="text" id="indirizzo"><br>
+        Telefono: <input type="tel" id="telefono"><br>
+        Nome Azienda: <input type="text" id="nomeAzienda"><br>
         Password: <input type="password" id="password" required><br>
         <button type="submit" onclick="inserisciCliente()">Inserisci</button>
     </form>

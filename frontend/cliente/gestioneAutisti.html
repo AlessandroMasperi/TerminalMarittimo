@@ -24,6 +24,30 @@
             const password = document.getElementById("password").value;
             const passwordHash = CryptoJS.MD5(password).toString();
 
+            if (nome.trim() === "") 
+            {
+                alert("Il nome è obbligatorio.");
+                return;
+            }
+
+            if (cognome.trim() === "") 
+            {
+                alert("Il cognome è obbligatorio.");
+                return;
+            }
+
+            if (patente.trim() === "") 
+            {
+                alert("La patente è obbligatoria.");
+                return;
+            }
+
+            if (password.trim() === "") 
+            {
+                alert("La password è obbligatoria.");
+                return;
+            }
+
             fetch(`http://localhost:8080/gestioneAutisti/inserisci?nome=${nome}&cognome=${cognome}&patente=${patente}&password=${passwordHash}`)
                 .then(res => res.text())
                 .then(msg => {

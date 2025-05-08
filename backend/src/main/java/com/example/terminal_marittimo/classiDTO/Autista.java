@@ -17,14 +17,14 @@ public class Autista
         this.password = password;
     }
 
-    public int getId() {return id;}
+    public int getId() {return this.id;}
 
-    public String getNome() {return nome;}
+    public String getNome() {return this.nome;}
 
-    public String getCognome() {return cognome;}
+    public String getCognome() {return this.cognome;}
 
-    public String getPatente() {return patente;}
+    public String getPatente() {return this.patente;}
 
-    public String getPassword() {return password;}
+    public String getPassword() {return this.password;}
 
 }

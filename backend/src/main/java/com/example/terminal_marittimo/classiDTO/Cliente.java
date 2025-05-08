@@ -21,13 +21,13 @@ public class Cliente {
         this.password = password;
     }
 
-    public int getId() { return id; }
-    public String getNome() { return nome; }
-    public String getCognome() { return cognome; }
-    public String getIndirizzo() { return indirizzo; }
-    public String getTelefono() { return telefono; }
-    public String getEmail() { return email; }
-    public String getNomeAzienda() { return nomeAzienda; }
-    public String getPassword() { return password; }
+    public int getId() { return this.id; }
+    public String getNome() { return this.nome; }
+    public String getCognome() { return this.cognome; }
+    public String getIndirizzo() { return this.indirizzo; }
+    public String getTelefono() { return this.telefono; }
+    public String getEmail() { return this.email; }
+    public String getNomeAzienda() { return this.nomeAzienda; }
+    public String getPassword() { return this.password; }
 }
 
