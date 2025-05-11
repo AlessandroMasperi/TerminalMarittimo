@@ -7,7 +7,7 @@ import com.example.terminal_marittimo.database;
 public class AdminDAO 
 {
 
-    public boolean verificaCredenziali(String username, String password) 
+    public int verificaCredenziali(String username, String password) 
     {
         try (Connection conn = DriverManager.getConnection(database.URL, database.USER, database.PASSWORD)) 
         {
@@ -16,10 +16,14 @@ public class AdminDAO
             stmt.setString(1, username);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
-            return rs.next();
+            if (rs.next()) {
+                return rs.getInt("id");
+            } else {
+                return -1;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return -1;
         }
     }
     

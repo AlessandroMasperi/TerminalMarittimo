@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Camion</title>
+    <script src="../scriptComune.js"></script>
+    <script>
+        function caricamento() {
+            controllaAutenticazione('Cliente');
+            caricaCamion();
+        }
+
+        function tornaIndietro() {
+            window.location.href = "homeCliente.html";
+        }
+
+        function inserisciCamion() {
+            const targa = document.getElementById("targa").value;
+            const marca = document.getElementById("marca").value;
+            const modello = document.getElementById("modello").value;
+            const colore = document.getElementById("colore").value;
+
+            if (!targa || !marca || !modello || !colore) {
+                alert("Compila tutti i campi.");
+                return;
+            }
+
+            fetch(`http://localhost:8080/gestioneCamion/inserisci?targa=${targa}&marca=${marca}&modello=${modello}&colore=${colore}`)
+                .then(res => res.text())
+                .then(msg => {
+                    alert("Camion inserito.");
+                    document.getElementById("formCamion").reset();
+                    caricaCamion();
+                });
+        }
+
+        function caricaCamion() {
+            fetch("http://localhost:8080/gestioneCamion/tutti")
+                .then(res => res.json())
+                .then(camion => {
+                    const tabella = document.getElementById("tabellaCamion");
+
+                    tabella.innerHTML = `<tr>
+                                            <th>Targa</th>
+                                            <th>Marca</th>
+                                            <th>Modello</th>
+                                            <th>Colore</th>
+                                            <th>Elimina</th>
+                                        </tr>`;
+
+                    camion.forEach(c => {
+                        const riga = document.createElement("tr");
+
+                        const targaCell = document.createElement("td");
+                        targaCell.textContent = c.targa;
+
+                        const marcaCell = document.createElement("td");
+                        marcaCell.textContent = c.marca;
+
+                        const modelloCell = document.createElement("td");
+                        modelloCell.textContent = c.modello;
+
+                        const coloreCell = document.createElement("td");
+                        coloreCell.textContent = c.colore;
+
+                        const eliminaCell = document.createElement("td");
+                        const btn = document.createElement("button");
+                        btn.textContent = "Elimina";
+                        btn.addEventListener("click", () => eliminaCamion(c.targa));
+                        eliminaCell.appendChild(btn);
+
+                        riga.append(targaCell, marcaCell, modelloCell, coloreCell, eliminaCell);
+                        tabella.appendChild(riga);
+                    });
+                });
+        }
+
+        function eliminaCamion(targa) 
+        {
+            if (confirm("Sei sicuro di voler eliminare questo camion?")) {
+                fetch(`http://localhost:8080/gestioneCamion/elimina?targa=${targa}`)
+                    .then(res => res.text())
+                    .then(() => {
+                        alert("Camion eliminato.");
+                        caricaCamion();
+                    });
+            }
+        }
+    </script>
+</head>
+
+<body onload="caricamento()">
+    <h1>Gestione Camion</h1>
+    <button onclick="tornaIndietro()">Torna home</button>
+
+    <h2>Inserisci Nuovo Camion</h2>
+    <form id="formCamion">
+        Targa: <input type="text" id="targa" required>
+        Marca: <input type="text" id="marca" required>
+        Modello: <input type="text" id="modello" required>
+        Colore: <input type="text" id="colore" required>
+        <button type="submit" onclick="inserisciCamion()">Inserisci</button>
+    </form>
+
+    <h2>Lista Camion</h2>
+    <table id="tabellaCamion"></table>
+</body>
+
+</html>

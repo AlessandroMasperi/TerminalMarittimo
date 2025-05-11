@@ -16,23 +16,28 @@ public class controllerLogin
 
     @GetMapping
     public Utente login(@RequestParam String username, @RequestParam String password) {
-        if (autistaDAO.verificaCredenziali(username, password)) {
-            return new Utente(username, "Autista");
+        int id = autistaDAO.verificaCredenziali(username, password);
+        if (id != -1) {
+            return new Utente(id, username, "Autista");
         }
-        if (clienteDAO.verificaCredenziali(username, password)) {
-            return new Utente(username, "Cliente");
+        id = clienteDAO.verificaCredenziali(username, password);
+        if (id != -1) {
+            return new Utente(id,  username, "Cliente");
         }
-        if (fornitoreDAO.verificaCredenziali(username, password)) {
-            return new Utente(username, "Fornitore");
+        id = fornitoreDAO.verificaCredenziali(username, password);
+        if (id != -1) {
+            return new Utente(id,  username, "Fornitore");
         }
-        if (operatoreDAO.verificaCredenziali(username, password)) {
-            return new Utente(username, "Operatore");
+        id = operatoreDAO.verificaCredenziali(username, password);
+        if (id != -1) {
+            return new Utente(id,  username, "Operatore");
         }
-        if (adminDAO.verificaCredenziali(username, password)) {
-            return new Utente(username, "Admin");
+        id = adminDAO.verificaCredenziali(username, password);
+        if (id != -1) {
+            return new Utente(id, username, "Admin");
         }
 
-        return new Utente("null", "null");
+        return new Utente(-1,"null","null");
     }
 }
 
