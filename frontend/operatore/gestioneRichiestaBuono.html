@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Richieste Buoni</title>
+    <script src="../scriptComune.js"></script>
+    <script>
+        function caricamento() {
+            controllaAutenticazione('Operatore');
+            caricaRichieste();
+        }
+
+        function tornaIndietro() {
+            window.location.href = "homeOperatore.html";
+        }
+
+        function caricaRichieste() {
+            fetch("http://localhost:8080/gestioneRichiesteBuono/tutte")
+                .then(res => res.json())
+                .then(richieste => {
+                    const tabella = document.getElementById("tabellaRichieste");
+                    tabella.innerHTML = "";
+
+                    const intestazione = document.createElement("tr");
+                    ["ID", "Utente", "Importo", "Data Richiesta", "Approva", "Rifiuta"].forEach(etichetta => {
+                        const th = document.createElement("th");
+                        th.textContent = etichetta;
+                        intestazione.appendChild(th);
+                    });
+                    tabella.appendChild(intestazione);
+
+                    richieste.forEach(richiesta => {
+                        const riga = document.createElement("tr");
+
+                        const id = document.createElement("td");
+                        id.textContent = richiesta.id;
+                        riga.appendChild(id);
+
+                        const cliente = document.createElement("td");
+                        cliente.textContent = `${richiesta.cliente.nome} ${richiesta.cliente.cognome} (${richiesta.cliente.nomeAzienda})`;
+                        riga.appendChild(cliente);
+
+                        const fornitore = document.createElement("td");
+                        fornitore.textContent = `${richiesta.polizza.fornitore.nome} (${richiesta.polizza.fornitore.nomeAzienda})`;
+                        riga.appendChild(fornitore);
+
+                        const merce = document.createElement("td");
+                        merce.textContent = richiesta.polizza.merce.tipo;
+                        riga.appendChild(merce);
+
+                        const peso = document.createElement("td");
+                        peso.textContent = richiesta.peso + " kg";
+                        riga.appendChild(peso);
+
+                        const date = document.createElement("td");
+                        date.textContent = `${richiesta.polizza.viaggio.dataPartenza} → ${richiesta.polizza.viaggio.dataArrivo}`;
+                        riga.appendChild(date);
+
+                        const tratta = document.createElement("td");
+                        tratta.textContent = `${richiesta.polizza.viaggio.linea.portoPartenza.porto} (${richiesta.polizza.viaggio.linea.portoPartenza.nazione}) → ${richiesta.polizza.viaggio.linea.portoDestinazione.porto} (${richiesta.polizza.viaggio.linea.portoDestinazione.nazione})`;
+                        riga.appendChild(tratta);
+
+                        // Bottone approva
+                        const approvaTd = document.createElement("td");
+                        const approvaBtn = document.createElement("button");
+                        approvaBtn.textContent = "Approva";
+                        approvaBtn.classList.add("btn", "btn-success");
+                        approvaBtn.addEventListener("click", () => approvaRichiesta(richiesta.id));
+                        approvaTd.appendChild(approvaBtn);
+                        riga.appendChild(approvaTd);
+
+                        document.querySelector("#tabellaRichieste tbody").appendChild(riga);
+                    });
+
+                });
+        }
+
+        function approvaRichiesta(id) {
+            if (confirm("Vuoi approvare questa richiesta?")) {
+                fetch(`http://localhost:8080/gestioneRichiesteBuono/approva?id=${id}`)
+                    .then(res => res.text())
+                    .then(() => {
+                        alert("Richiesta approvata. Buono creato.");
+                        caricaRichieste();
+                    });
+            }
+        }
+
+        function rifiutaRichiesta(id) {
+            if (confirm("Vuoi rifiutare questa richiesta?")) {
+                fetch(`http://localhost:8080/gestioneRichiesteBuono/elimina?id=${id}`)
+                    .then(res => res.text())
+                    .then(() => {
+                        alert("Richiesta rifiutata.");
+                        caricaRichieste();
+                    });
+            }
+        }
+    </script>
+</head>
+
+<body onload="caricamento()">
+    <h1>Gestione Richieste Buoni</h1>
+    <button onclick="tornaIndietro()">Torna home</button>
+
+    <h2>Lista Richieste</h2>
+    <table id="tabellaRichieste"></table>
+</body>
+
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Polizze</title>
+    <script src="../scriptComune.js"></script>
+    <script>
+        function inizializza() {
+            controllaAutenticazione('Cliente');
+            caricaPolizze();
+        }
+
+        function caricaPolizze() {
+            const utente = JSON.parse(sessionStorage.getItem("utente"));
+            if (!utente || !utente.id) {
+                alert("Utente non autenticato.");
+                return;
+            }
+
+            const idUtente = utente.id;
+
+            fetch(`http://localhost:8080/gestionePolizze/tutteID?id=${idUtente}`)
+                .then(res => res.json())
+                .then(polizze => {
+                    const tabella = document.getElementById("tabellaPolizze");
+
+                    tabella.innerHTML = `
+                        <tr>
+                            <th>Fornitore</th>
+                            <th>Merce</th>
+                            <th>Peso</th>
+                            <th>Azioni</th>
+                        </tr>
+                    `;
+
+                    polizze.forEach(p => {
+                        const riga = document.createElement("tr");
+                        riga.innerHTML = `
+                            <td>${p.fornitore.nome} ${p.fornitore.cognome} (${p.fornitore.nomeAzienda})</td>
+                            <td>${p.merce.tipo}</td>
+                            <td>${p.peso} kg</td>
+                            <td>
+                                <button onclick="eliminaPolizza(${p.id})">Elimina</button>
+                                <button onclick="mostraFormBuono(this)">Crea Buono</button>
+                                <div class="formBuono">
+                                    <input type="number" placeholder="Quantità" min="1" />
+                                    <button onclick="salvaBuono(${idUtente}, ${p.id}, this)">Salva</button>
+                                </div>
+                            </td>
+                        `;
+                        tabella.appendChild(riga);
+                    });
+                })
+                .catch(() => {
+                    alert("Errore nel recupero delle polizze.");
+                });
+        }
+
+        function eliminaPolizza(id) {
+            if (confirm("Sei sicuro di voler eliminare questa polizza?")) {
+                fetch(`http://localhost:8080/gestionePolizze/elimina?id=${id}`)
+                    .then(res => {
+                        alert("Polizza eliminata.");
+                        caricaPolizze();
+                    });
+            }
+        }
+
+        function mostraFormBuono(bottone) {
+            const form = bottone.nextElementSibling;
+            const visibile = getComputedStyle(form).display !== "none";
+            form.style.display = visibile ? "none" : "block";
+        }
+
+        function salvaBuono(idCliente, idPolizza, btnSalva) {
+            const input = btnSalva.previousElementSibling;
+            const quantita = input.value;
+
+            if (!quantita || quantita <= 0) {
+                alert("Inserisci una quantità valida.");
+                return;
+            }
+
+            fetch(`http://localhost:8080/gestioneRichiesteBuono/inserisci?idCliente=${idCliente}&idPolizza=${idPolizza}&peso=${quantita}`)
+                .then(res => {
+                    if (res.ok) {
+                        alert("Buono creato con successo!");
+                        btnSalva.parentElement.style.display = "none";
+                        input.value = "";
+                    } else {
+                        alert("Errore nella creazione del buono.");
+                    }
+                });
+        }
+    </script>
+    <style>
+        .formBuono {
+            display: none;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body onload="inizializza()">
+
+    <h1>Gestione Polizze</h1>
+    <button onclick="window.location.href='homeCliente.html'">Torna alla home</button>
+
+    <h2>Lista Polizze</h2>
+    <table id="tabellaPolizze"></table>
+</body>
+</html>

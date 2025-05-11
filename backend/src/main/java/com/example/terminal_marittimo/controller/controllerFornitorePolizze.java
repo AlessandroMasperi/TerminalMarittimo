@@ -28,6 +28,11 @@ public class controllerFornitorePolizze
         return dao.trovaTuttePolizze();
     }
 
+    @GetMapping("/tutteID")
+    public ArrayList<Polizza> trovaTutte(@RequestParam int id) {
+        return dao.trovaTuttePolizzeDatoIDCliente(id);
+    }
+
     @GetMapping("/elimina")
     public String elimina(@RequestParam int id) {
         dao.eliminaPolizza(id);
