@@ -76,14 +76,12 @@ public class ViaggioDAO {
                         rs.getInt("id_tipologia"),
                         rs.getString("tipologia"));
 
-                // Creazione oggetto Nave
                 Nave nave = new Nave(
                         rs.getInt("id_nave"),
                         rs.getString("nome_nave"),
                         rs.getInt("anno_produzione"),
                         tipologia);
 
-                // Creazione oggetto Viaggio
                 String dtPartenza = rs.getString("dt_partenza");
                 String dtArrivo = rs.getString("dt_arrivo");
 

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Polizze</title>
+    <script src="../scriptComune.js"></script>
+    <script>
+        function caricamento() {
+            controllaAutenticazione('Fornitore');
+            caricaPolizze();
+            caricaViaggi();
+            caricaFornitori();
+            caricaClienti();
+            caricaMerci();
+        }
+
+        function tornaIndietro() {
+            window.location.href = "homeFornitore.html";
+        }
+
+        function inserisciPolizza() {
+            const idViaggio = document.getElementById("viaggio").value;
+            const idFornitore = document.getElementById("fornitore").value;
+            const idCliente = document.getElementById("cliente").value;
+            const idMerce = document.getElementById("merce").value;
+            const peso = document.getElementById("peso").value;
+            const ggFranchigia = document.getElementById("franchigia").value;
+            const costoGg = document.getElementById("costo").value;
+
+            if (!idViaggio || !idFornitore || !idCliente || !idMerce || !peso || !ggFranchigia || !costoGg) {
+                alert("Compila tutti i campi.");
+                return;
+            }
+
+            if (isNaN(peso) || parseFloat(peso) <= 0) {
+                alert("Il peso deve essere un numero maggiore di 0.");
+                return;
+            }
+
+            if (isNaN(ggFranchigia) || parseInt(ggFranchigia) <= 0 || !Number.isInteger(parseFloat(ggFranchigia))) {
+                alert("I giorni di franchigia devono essere un numero intero maggiore di 0.");
+                return;
+            }
+
+            if (isNaN(costoGg) || parseFloat(costoGg) <= 0) {
+                alert("Il costo al giorno deve essere un numero positivo.");
+                return;
+            }
+
+            fetch(`http://localhost:8080/gestionePolizze/inserisci?idViaggio=${idViaggio}&idFornitore=${idFornitore}&idCliente=${idCliente}&idMerce=${idMerce}&peso=${peso}&ggFranchigia=${ggFranchigia}&costoGg=${costoGg}`)
+                .then(res => res.text())
+                .then(() => {
+                    alert("Polizza inserita.");
+                    document.getElementById("formPolizza").reset();
+                    caricaPolizze();
+                });
+        }
+
+        function caricaPolizze() {
+            fetch("http://localhost:8080/gestionePolizze/tutte")
+                .then(res => res.json())
+                .then(polizze => {
+                    const tabella = document.getElementById("tabellaPolizze");
+                    tabella.innerHTML = "";
+
+                    const header = document.createElement("tr");
+                    header.innerHTML = `
+                        <th>Viaggio</th><th>Fornitore</th><th>Cliente</th>
+                        <th>Merce</th><th>Peso (kg)</th><th>Franchigia (gg)</th><th>Costo/giorno</th><th>Elimina</th>
+                    `;
+                    tabella.appendChild(header);
+
+                    polizze.forEach(p => {
+                        const riga = document.createElement("tr");
+                        riga.innerHTML = `
+                            <td>${p.viaggio.nave.nome} (${p.viaggio.dt_partenza} => ${p.viaggio.dt_arrivo})</td>
+                            <td>${p.fornitore.nome} ${p.fornitore.cognome} (${p.fornitore.nomeAzienda})</td>
+                            <td>${p.cliente.nome} ${p.cliente.cognome} (${p.cliente.nomeAzienda})</td>
+                            <td>${p.merce.tipo}</td>
+                            <td>${p.peso}</td>
+                            <td>${p.gg_franchigia}</td>
+                            <td>${p.costo_gg}</td>
+                        `;
+
+                        const cellElimina = document.createElement("td");
+                        const btn = document.createElement("button");
+                        btn.textContent = "Elimina";
+                        btn.onclick = () => eliminaPolizza(p.id);
+                        cellElimina.appendChild(btn);
+                        riga.appendChild(cellElimina);
+
+                        tabella.appendChild(riga);
+                    });
+                });
+        }
+
+        function eliminaPolizza(id) {
+            if (confirm("Sei sicuro di voler eliminare questa polizza?")) {
+                fetch(`http://localhost:8080/gestionePolizze/elimina?id=${id}`)
+                    .then(res => res.text())
+                    .then(() => {
+                        alert("Polizza eliminata.");
+                        caricaPolizze();
+                    });
+            }
+        }
+
+        function caricaViaggi() {
+            fetch("http://localhost:8080/gestioneViaggi/tuttiViaggi")
+                .then(res => res.json())
+                .then(viaggi => {
+                    const select = document.getElementById("viaggio");
+                    select.innerHTML = "";
+                    viaggi.forEach(v => {
+                        const option = document.createElement("option");
+                        option.value = v.id;
+                        option.textContent = `${v.nave.nome} (${v.dt_partenza} => ${v.dt_arrivo})`;
+                        select.appendChild(option);
+                    });
+                });
+        }
+
+        function caricaFornitori() {
+            fetch("http://localhost:8080/gestioneFornitori/tutti")
+                .then(res => res.json())
+                .then(fornitori => {
+                    const select = document.getElementById("fornitore");
+                    select.innerHTML = "";
+                    fornitori.forEach(f => {
+                        const option = document.createElement("option");
+                        option.value = f.id;
+                        option.textContent = `${f.nome} ${f.cognome} (${f.nomeAzienda})`;
+                        select.appendChild(option);
+                    });
+                });
+        }
+
+        function caricaClienti() {
+            fetch("http://localhost:8080/gestioneClienti/tutti")
+                .then(res => res.json())
+                .then(clienti => {
+                    const select = document.getElementById("cliente");
+                    select.innerHTML = "";
+                    clienti.forEach(c => {
+                        const option = document.createElement("option");
+                        option.value = c.id;
+                        option.textContent = `${c.nome} ${c.cognome} (${c.nomeAzienda})`;
+                        select.appendChild(option);
+                    });
+                });
+        }
+
+        function caricaMerci() {
+            fetch("http://localhost:8080/gestionePolizze/tutteMerci")
+                .then(res => res.json())
+                .then(merci => {
+                    const select = document.getElementById("merce");
+                    select.innerHTML = "";
+                    merci.forEach(m => {
+                        const option = document.createElement("option");
+                        option.value = m.id;
+                        option.textContent = m.tipo;
+                        select.appendChild(option);
+                    });
+                });
+        }
+    </script>
+</head>
+
+<body onload="caricamento()">
+    <h1>Gestione Polizze</h1>
+    <button onclick="tornaIndietro()">Torna home</button>
+
+    <h2>Inserisci Nuova Polizza</h2>
+    <form id="formPolizza">
+        Viaggio:
+        <select id="viaggio" required></select>
+        Fornitore:
+        <select id="fornitore" required></select>
+        Cliente:
+        <select id="cliente" required></select>
+        Merce:
+        <select id="merce" required></select>
+        Peso (kg):
+        <input type="number" id="peso" min="0" required>
+        Giorni di Franchigia:
+        <input type="number" id="franchigia" min="0" required>
+        Costo al giorno (€):
+        <input type="number" step="0.5" id="costo" min="0" required>
+        <button type="button" onclick="inserisciPolizza()">Inserisci</button>
+    </form>
+
+    <h2>Lista Polizze</h2>
+    <table id="tabellaPolizze"></table>
+</body>
+
+</html>

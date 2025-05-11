@@ -4,10 +4,18 @@
   <meta charset="UTF-8">
   <title>Home Fornitore</title>
   <script src="../scriptComune.js"></script>
+  <script>
+    function vaiAGestionePolizze() 
+    {
+      window.location.href = "gestionePolizze.html";
+    }
+  </script>
 </head>
 <body onload="controllaAutenticazione('Fornitore')">
 
   <h1>Benvenuto, Fornitore</h1>
+
+  <button onclick="vaiAGestionePolizze()">Gestione Polizze Carico</button>
 
   <button onclick="logout()">Logout</button>
 </body>
