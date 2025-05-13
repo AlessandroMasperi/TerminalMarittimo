@@ -213,7 +213,7 @@ public class Richiesta_buonoDAO
             if (rs.next()) {
                 eliminaRichiesta(idRichiesta);
 
-                //mettere l'aggiunta del buono nella tabella
+                //richiama la funzione inserisciBuono che è nel file buonoDAO
             } else 
             {
                 System.out.println("Richiesta non trovata per approvazione.");
