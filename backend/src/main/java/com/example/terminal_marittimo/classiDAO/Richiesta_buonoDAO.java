@@ -212,8 +212,9 @@ public class Richiesta_buonoDAO
     
             if (rs.next()) {
                 eliminaRichiesta(idRichiesta);
-
-                //richiama la funzione inserisciBuono che è nel file buonoDAO
+    
+                BuonoDAO dao = new BuonoDAO();
+                dao.inserisciBuono(rs.getInt("id_polizza"), rs.getInt("id_cliente"), rs.getFloat("peso"));
             } else 
             {
                 System.out.println("Richiesta non trovata per approvazione.");
