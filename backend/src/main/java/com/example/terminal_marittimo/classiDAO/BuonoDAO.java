@@ -18,7 +18,7 @@ import java.util.Random;
 
 public class BuonoDAO {
 
-    public void inserisciBuono(int idPolizza, int idCliente, double peso) {
+    public void inserisciBuono(int idPolizza, int idCliente, float peso) {
         String sql = "INSERT INTO buoni_consegna (dt_emissione_buono, id_polizza, id_cliente, peso, codice_conferma) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection conn = DriverManager.getConnection(database.URL, database.USER, database.PASSWORD);

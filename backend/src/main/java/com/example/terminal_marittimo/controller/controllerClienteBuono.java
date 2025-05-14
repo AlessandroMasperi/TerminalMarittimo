@@ -16,7 +16,7 @@ public class controllerClienteBuono {
     public String inserisci(
             @RequestParam int idPolizza,
             @RequestParam int idCliente,
-            @RequestParam double peso) 
+            @RequestParam float peso) 
     {
         dao.inserisciBuono(idPolizza, idCliente, peso);
         return "OK";
