@@ -24,6 +24,11 @@ public class controllerClienteAssegnaConsegna {
         return dao.trovaTutteAssegnazioni();
     }
 
+    @GetMapping("/tuttiID")
+    public ArrayList<Assegna_Consegna> trovaTuttiID(@RequestParam int id) {
+        return dao.trovaTutteAssegnazioniByID(id);
+    }
+
     @GetMapping("/elimina")
     public String elimina(@RequestParam int id) {
         dao.eliminaAssegnazione(id);

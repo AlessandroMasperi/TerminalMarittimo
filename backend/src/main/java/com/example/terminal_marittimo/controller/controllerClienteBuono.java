@@ -27,6 +27,11 @@ public class controllerClienteBuono {
         return dao.trovaTuttiBuoni();
     }
 
+    @GetMapping("/tuttiID")
+    public List<Buono> trovaTutti(@RequestParam int id) {
+        return dao.trovaTuttiBuonibyID(id);
+    }
+
     @GetMapping("/elimina")
     public String elimina(@RequestParam int id) {
         dao.eliminaBuono(id);

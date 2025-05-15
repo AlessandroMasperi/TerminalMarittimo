@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Richieste Consegna</title>
+    <script src="../scriptComune.js"></script>
+    <script>
+        function inizializza() 
+        {
+            controllaAutenticazione('Cliente');
+            caricaRichieste();
+            caricaAutisti();
+            caricaBuoni();
+        }
+
+        function caricaRichieste() {
+            const utente = JSON.parse(sessionStorage.getItem("utente"));
+            if (!utente || !utente.id) {
+                alert("Utente non autenticato.");
+                return;
+            }
+
+            fetch("http://localhost:8080/gestioneAssegnazioni/tuttiID?id=" + utente.id)
+                .then(res => res.json())
+                .then(richieste => {
+                    const tabella = document.getElementById("tabellaRichieste");
+
+                    tabella.innerHTML = `
+                        <tr>
+                            <th>Autista</th>
+                            <th>ID Buono</th>
+                            <th>Azioni</th>
+                        </tr>
+                    `;
+
+                    richieste.forEach(r => {
+                        const riga = document.createElement("tr");
+                        riga.innerHTML = `
+                            <td>${r.autista.nome} ${r.autista.cognome}</td>
+                            <td>${r.buono.id}</td>
+                            <td>
+                                <button onclick="eliminaRichiesta(${r.id})">Elimina</button>
+                            </td>
+                        `;
+                        tabella.appendChild(riga);
+                    });
+                })
+                .catch(() => {
+                    alert("Errore nel recupero delle richieste.");
+                });
+        }
+
+        function eliminaRichiesta(id) {
+            if (confirm("Sei sicuro di voler eliminare questa richiesta?")) {
+                fetch(`http://localhost:8080/gestioneAssegnazioni/elimina?id=${id}`)
+                    .then(() => {
+                        alert("Richiesta eliminata.");
+                        caricaRichieste();
+                    });
+            }
+        }
+
+        function assegnaConsegna() {
+            const idBuono = document.getElementById("selectBuono").value;
+            const idAutista = document.getElementById("selectAutista").value;
+            const utente = JSON.parse(sessionStorage.getItem("utente"));
+
+            if (!idBuono || !idAutista || idBuono == 0 || idAutista == 0) {
+                alert("Inserisci tutti i campi.");
+                return;
+            }
+
+            fetch(`http://localhost:8080/gestioneAssegnazioni/inserisci?idBuono=${idBuono}&idAutista=${idAutista}&idCliente=${utente.id}`)
+                .then(res => {
+                    if (res.ok) {
+                        alert("Consegna assegnata con successo.");
+                        document.getElementById("selectBuono").selectedIndex = 0;
+                        document.getElementById("selectAutista").selectedIndex = 0;
+                        caricaRichieste();
+                    } else {
+                        alert("Errore nell'assegnazione.");
+                    }
+                });
+        }
+
+        function caricaAutisti() {
+            fetch("http://localhost:8080/gestioneAutisti/tutti")
+                .then(res => res.json())
+                .then(autisti => {
+                    const select = document.getElementById("selectAutista");
+                    select.innerHTML = `<option value="">Seleziona autista</option>`;
+                    autisti.forEach(a => {
+                        const option = document.createElement("option");
+                        option.value = a.id;
+                        option.textContent = `${a.nome} ${a.cognome}`;
+                        select.appendChild(option);
+                    });
+                });
+        }
+
+        function caricaBuoni() {
+            const utente = JSON.parse(sessionStorage.getItem("utente"));
+            fetch(`http://localhost:8080/gestioneBuoni/tuttiID?id=${utente.id}`)
+                .then(res => res.json())
+                .then(buoni => {
+                    const select = document.getElementById("selectBuono");
+                    select.innerHTML = `<option value="">Seleziona buono</option>`;
+                    buoni.forEach(b => {
+                        const option = document.createElement("option");
+                        option.value = b.id;
+                        option.textContent = `Buono ${b.id}`;
+                        select.appendChild(option);
+                    });
+                });
+        }
+    </script>
+</head>
+<body onload="inizializza()">
+
+    <h1>Gestione Richieste di Consegna</h1>
+    <button onclick="window.location.href='homeCliente.html'">Torna alla home</button>
+
+    <h2>Nuova Assegnazione</h2>
+    <label for="selectBuono">Buono:</label>
+    <select id="selectBuono" required></select><br>
+
+    <label for="selectAutista">Autista:</label>
+    <select id="selectAutista" required></select><br>
+
+    <button onclick="assegnaConsegna()">Assegna Consegna</button>
+
+    <h2>Assegnazioni Effettuate</h2>
+    <table id="tabellaRichieste"></table>
+
+</body>
+</html>

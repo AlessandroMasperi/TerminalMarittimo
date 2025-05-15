@@ -9,5 +9,4 @@ public class TerminalMarittimoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TerminalMarittimoApplication.class, args);
 	}
-
-}
+}	
