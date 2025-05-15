@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <title>Login</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <link rel="stylesheet" href="bootstrap/bootstrap.css">
+  <script src="bootstrap/bootstrap.js"></script>
   <script>
     function controllaAutenticazioneRedirect() {
       const utenteJSON = sessionStorage.getItem("utente");
@@ -59,14 +61,24 @@
   </script>
 </head>
 
-<body onload="controllaAutenticazioneRedirect()">
-  <h2>Login</h2>
-  <form id="loginForm">
-    <label>Username: <input type="text" id="username"></label><br>
-    <label>Password: <input type="password" id="password"></label><br>
-    <button type="button" onclick="eseguiLogin()">Login</button>
-  </form>
-  <p id="messaggio"></p>
+<body class="bg-light" onload="controllaAutenticazioneRedirect()">
+  <div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card p-4 shadow-sm" style="min-width: 350px;">
+      <h2 class="text-center mb-4">Login</h2>
+      <form id="loginForm">
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" id="username" class="form-control" placeholder="Inserisci username">
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Inserisci password">
+        </div>
+        <button type="button" class="btn btn-primary w-100" onclick="eseguiLogin()">Accedi</button>
+      </form>
+      <p id="messaggio" class="text-danger mt-3 text-center"></p>
+    </div>
+  </div>
 </body>
 
 </html>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 08, 2025 alle 18:47
+-- Creato il: Mag 15, 2025 alle 23:07
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.2.12
 
@@ -39,6 +39,19 @@ CREATE TABLE `admin` (
 
 INSERT INTO `admin` (`id`, `username`, `password`) VALUES
 (1, 'admin1', '5f4dcc3b5aa765d61d8327deb882cf99');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `assegna_consegna`
+--
+
+CREATE TABLE `assegna_consegna` (
+  `id` int(11) NOT NULL,
+  `buono` int(11) DEFAULT NULL,
+  `cliente` int(11) DEFAULT NULL,
+  `autista` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
 
@@ -163,7 +176,6 @@ CREATE TABLE `consegne` (
   `id_consegna` int(11) NOT NULL,
   `nbuono` int(11) DEFAULT NULL,
   `dt_consegna` date NOT NULL DEFAULT current_timestamp(),
-  `peso` decimal(10,2) NOT NULL,
   `id_autista` int(11) DEFAULT NULL,
   `targa` varchar(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -172,17 +184,17 @@ CREATE TABLE `consegne` (
 -- Dump dei dati per la tabella `consegne`
 --
 
-INSERT INTO `consegne` (`id_consegna`, `nbuono`, `dt_consegna`, `peso`, `id_autista`, `targa`) VALUES
-(51, 20, '2025-03-01', 1000.00, 3, 'AB123CD'),
-(52, 23, '2025-03-03', 1500.00, 2, 'GH789KL'),
-(53, 30, '2025-03-05', 1200.00, 5, 'LM456OP'),
-(54, 19, '2025-03-07', 1800.00, 4, 'QW234ER'),
-(55, 25, '2025-03-09', 900.00, 1, 'XY987ZT'),
-(56, 18, '2025-03-11', 1600.00, 3, 'AB123CD'),
-(57, 22, '2025-03-13', 2000.00, 2, 'GH789KL'),
-(58, 21, '2025-03-15', 1300.00, 4, 'LM456OP'),
-(59, 24, '2025-03-17', 1100.00, 5, 'QW234ER'),
-(60, 17, '2025-03-19', 1700.00, 3, 'XY987ZT');
+INSERT INTO `consegne` (`id_consegna`, `nbuono`, `dt_consegna`, `id_autista`, `targa`) VALUES
+(51, 20, '2025-03-01', 3, 'AB123CD'),
+(52, 23, '2025-03-03', 2, 'GH789KL'),
+(53, 30, '2025-03-05', 5, 'LM456OP'),
+(54, 19, '2025-03-07', 4, 'QW234ER'),
+(55, 25, '2025-03-09', 1, 'XY987ZT'),
+(56, 18, '2025-03-11', 3, 'AB123CD'),
+(57, 22, '2025-03-13', 2, 'GH789KL'),
+(58, 21, '2025-03-15', 4, 'LM456OP'),
+(59, 24, '2025-03-17', 5, 'QW234ER'),
+(60, 17, '2025-03-19', 3, 'XY987ZT');
 
 -- --------------------------------------------------------
 
@@ -233,8 +245,7 @@ INSERT INTO `linea` (`id`, `nome`, `porto_partenza`, `porto_destinazione`) VALUE
 (11, 'Linea A', 1, 1),
 (12, 'Linea B', 2, 1),
 (13, 'Linea C', 3, 1),
-(14, 'Linea D', 4, 1),
-(16, 'Linea test', 10, 1);
+(14, 'Linea D', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -376,6 +387,28 @@ INSERT INTO `porti` (`id`, `porto`, `nazione`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `richiesta_buono`
+--
+
+CREATE TABLE `richiesta_buono` (
+  `id` int(11) NOT NULL,
+  `cliente` int(11) DEFAULT NULL,
+  `polizza` int(11) DEFAULT NULL,
+  `peso` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dump dei dati per la tabella `richiesta_buono`
+--
+
+INSERT INTO `richiesta_buono` (`id`, `cliente`, `polizza`, `peso`) VALUES
+(3, 1, 107, 2000.00),
+(4, 3, 107, 2000.00),
+(5, 3, 107, 2000.00);
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `tipologia_navi`
 --
 
@@ -440,6 +473,15 @@ INSERT INTO `viaggi` (`id`, `id_nave`, `id_linea`, `dt_partenza`, `dt_arrivo`) V
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username` (`username`);
+
+--
+-- Indici per le tabelle `assegna_consegna`
+--
+ALTER TABLE `assegna_consegna`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `buono` (`buono`),
+  ADD KEY `cliente` (`cliente`),
+  ADD KEY `autista` (`autista`);
 
 --
 -- Indici per le tabelle `autisti`
@@ -530,6 +572,14 @@ ALTER TABLE `porti`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indici per le tabelle `richiesta_buono`
+--
+ALTER TABLE `richiesta_buono`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `cliente` (`cliente`),
+  ADD KEY `polizza` (`polizza`);
+
+--
 -- Indici per le tabelle `tipologia_navi`
 --
 ALTER TABLE `tipologia_navi`
@@ -555,28 +605,34 @@ ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT per la tabella `assegna_consegna`
+--
+ALTER TABLE `assegna_consegna`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT per la tabella `autisti`
 --
 ALTER TABLE `autisti`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT per la tabella `buoni_consegna`
 --
 ALTER TABLE `buoni_consegna`
-  MODIFY `nbuono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `nbuono` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT per la tabella `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT per la tabella `consegne`
 --
 ALTER TABLE `consegne`
-  MODIFY `id_consegna` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id_consegna` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT per la tabella `fornitore`
@@ -588,7 +644,7 @@ ALTER TABLE `fornitore`
 -- AUTO_INCREMENT per la tabella `linea`
 --
 ALTER TABLE `linea`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT per la tabella `merci`
@@ -600,25 +656,31 @@ ALTER TABLE `merci`
 -- AUTO_INCREMENT per la tabella `navi`
 --
 ALTER TABLE `navi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT per la tabella `operatori`
 --
 ALTER TABLE `operatori`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT per la tabella `polizze_carico`
 --
 ALTER TABLE `polizze_carico`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
 
 --
 -- AUTO_INCREMENT per la tabella `porti`
 --
 ALTER TABLE `porti`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT per la tabella `richiesta_buono`
+--
+ALTER TABLE `richiesta_buono`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT per la tabella `tipologia_navi`
@@ -630,11 +692,19 @@ ALTER TABLE `tipologia_navi`
 -- AUTO_INCREMENT per la tabella `viaggi`
 --
 ALTER TABLE `viaggi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- Limiti per le tabelle scaricate
 --
+
+--
+-- Limiti per la tabella `assegna_consegna`
+--
+ALTER TABLE `assegna_consegna`
+  ADD CONSTRAINT `assegna_consegna_ibfk_1` FOREIGN KEY (`buono`) REFERENCES `buoni_consegna` (`nbuono`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `assegna_consegna_ibfk_2` FOREIGN KEY (`cliente`) REFERENCES `cliente` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `assegna_consegna_ibfk_3` FOREIGN KEY (`autista`) REFERENCES `autisti` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Limiti per la tabella `buoni_consegna`
@@ -672,6 +742,13 @@ ALTER TABLE `polizze_carico`
   ADD CONSTRAINT `polizze_carico_ibfk_2` FOREIGN KEY (`id_fornitore`) REFERENCES `fornitore` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `polizze_carico_ibfk_3` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `polizze_carico_ibfk_4` FOREIGN KEY (`id_merce`) REFERENCES `merci` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Limiti per la tabella `richiesta_buono`
+--
+ALTER TABLE `richiesta_buono`
+  ADD CONSTRAINT `richiesta_buono_ibfk_1` FOREIGN KEY (`cliente`) REFERENCES `cliente` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `richiesta_buono_ibfk_2` FOREIGN KEY (`polizza`) REFERENCES `polizze_carico` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Limiti per la tabella `viaggi`

@@ -5,6 +5,13 @@
     <meta charset="UTF-8">
     <title>Gestione Porti e Linee</title>
     <script src="../scriptComune.js"></script>
+    <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+    <script src="../bootstrap/bootstrap.js"></script>
+    <style>
+        #tabellaLinee tr, #tabellaPorti tr {
+            line-height: 4.5em;
+        }
+    </style>
     <script>
         function caricamento() {
             controllaAutenticazione('Admin');
@@ -85,6 +92,7 @@
                         const eliminaCell = document.createElement("td");
                         const eliminaButton = document.createElement("button");
                         eliminaButton.textContent = "Elimina";
+                        eliminaButton.className = "btn btn-danger btn-sm";
                         eliminaButton.addEventListener("click", () => {
                             eliminaPorto(p.id);
                         });
@@ -183,6 +191,7 @@
                         const eliminaCell = document.createElement("td");
                         const eliminaButton = document.createElement("button");
                         eliminaButton.textContent = "Elimina";
+                        eliminaButton.className = "btn btn-danger btn-sm";
                         eliminaButton.addEventListener("click", () => {
                             eliminaLinea(l.id);
                         });
@@ -198,34 +207,68 @@
     </script>
 </head>
 
-<body onload="caricamento()">
-    <h1>Gestione Porti e Linee</h1>
-    <button onclick="tornaIndietro()">Torna Home</button>
+<body onload="caricamento()" class="container my-4">
 
-    <h2>Inserisci Porto</h2>
-    <form id="formPorto">
-        Nome Porto: <input type="text" id="porto" required>
-        Nazione: <input type="text" id="nazione" required>
-        <button type="button" onclick="inserisciPorto()">Inserisci</button>
-    </form>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center mb-4 text-primary">Gestione Porti e Linee</h1>
+        <button onclick="tornaIndietro()" class="btn btn-secondary">Torna Home</button>
+    </div>
+
+    <div class="card mb-5">
+        <div class="card-header bg-primary text-white">Inserisci Porto</div>
+        <div class="card-body">
+            <form id="formPorto" class="row g-3">
+                <div class="col-md-6">
+                    <label for="porto" class="form-label">Nome Porto</label>
+                    <input type="text" id="porto" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="nazione" class="form-label">Nazione</label>
+                    <input type="text" id="nazione" class="form-control" required>
+                </div>
+                <div class="col-12">
+                    <button type="button" onclick="inserisciPorto()" class="btn btn-success">Inserisci</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <h3>Elenco Porti</h3>
-    <table id="tabellaPorti"></table>
+    <div class="table-responsive mb-5">
+        <table id="tabellaPorti" class="table table-striped table-bordered align-middle"></table>
+    </div>
 
-    <h2>Inserisci Linea</h2>
-    <form id="formLinea">
-        Nome Linea: <input type="text" id="nomeLinea" required><br>
-        Porto di Partenza:
-        <select id="partenza"></select><br>
-        Porto di destinazione:
-        <select id="destinazione" disabled>
-            <option value="1">Genova (Italia)</option>
-        </select>
-        <button type="button" onclick="inserisciLinea()">Inserisci Linea</button>
-    </form>
+    <div class="card mb-5">
+        <div class="card-header bg-primary text-white">Inserisci Linea</div>
+        <div class="card-body">
+            <form id="formLinea" class="row g-3">
+                <div class="col-12">
+                    <label for="nomeLinea" class="form-label">Nome Linea</label>
+                    <input type="text" id="nomeLinea" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="partenza" class="form-label">Porto di Partenza</label>
+                    <select id="partenza" class="form-select"></select>
+                </div>
+                <div class="col-md-6">
+                    <label for="destinazione" class="form-label">Porto di Destinazione</label>
+                    <select id="destinazione" class="form-select" disabled>
+                        <option value="1">Genova (Italia)</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="button" onclick="inserisciLinea()" class="btn btn-success">Inserisci Linea</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <h3>Elenco Linee</h3>
-    <table id="tabellaLinee"></table>
+    <div class="table-responsive">
+        <table id="tabellaLinee" class="table table-striped table-bordered align-middle"></table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

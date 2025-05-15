@@ -3,37 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <title>Home Admin</title>
+  <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+  <script src="../bootstrap/bootstrap.js"></script>
   <script src="../scriptComune.js"></script>
   <script>
-    function vaiAGestioneOperatori() 
-    {
+    function vaiAGestioneOperatori() {
       window.location.href = "gestioneOperatori.html";
     }
 
-    function vaiAGestioneNavi() 
-    {
+    function vaiAGestioneNavi() {
       window.location.href = "gestioneNavi.html";
     }
 
-    function vaiAGestionePortiLinee() 
-    {
+    function vaiAGestionePortiLinee() {
       window.location.href = "gestionePortiLinee.html";
     }
 
-    function vaiAGestioneViaggi() 
-    {
+    function vaiAGestioneViaggi() {
       window.location.href = "gestioneViaggi.html";
     }
   </script>
 </head>
-<body onload="controllaAutenticazione('Admin')">
+<body onload="controllaAutenticazione('Admin')" class="bg-light">
 
-  <h1>Benvenuto, Admin</h1>
+  <div class="container py-4 text-center">
+    <h1 class="mb-4 text-primary">Benvenuto, Admin</h1>
 
-  <button onclick="vaiAGestioneOperatori()">Gestione Operatori</button>
-  <button onclick="vaiAGestioneNavi()">Gestione Navi</button>
-  <button onclick="vaiAGestionePortiLinee()">Gestione Porti e Linee</button>
-  <button onclick="vaiAGestioneViaggi()">Gestione Viaggi</button>
-  <button onclick="logout()">Logout</button>
+    <div class="d-grid gap-3 col-6 mx-auto">
+      <button class="btn btn-primary btn-lg" onclick="vaiAGestioneOperatori()">Gestione Operatori</button>
+      <button class="btn btn-primary btn-lg" onclick="vaiAGestioneNavi()">Gestione Navi</button>
+      <button class="btn btn-primary btn-lg" onclick="vaiAGestionePortiLinee()">Gestione Porti e Linee</button>
+      <button class="btn btn-primary btn-lg" onclick="vaiAGestioneViaggi()">Gestione Viaggi</button>
+      <button class="btn btn-danger btn-lg" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
 </body>
 </html>

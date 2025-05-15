@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class ConsegnaDAO {
 
     public void inserisciConsegna(int idBuono, int idAutista, String targa) {
-        String sql = "INSERT INTO consegne (nbuono, id_autista, targa, peso) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO consegne (nbuono, id_autista, targa) VALUES (?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(database.URL, database.USER, database.PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {

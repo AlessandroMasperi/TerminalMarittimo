@@ -2,158 +2,174 @@
 <html lang="it">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Gestione Viaggi</title>
-    <script src="../scriptComune.js"></script>
-    <script>
-        function caricamento() 
-        {
-            controllaAutenticazione('Admin');
+  <meta charset="UTF-8">
+  <title>Gestione Viaggi</title>
+  <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+  <script src="../bootstrap/bootstrap.js"></script>
+  <script src="../scriptComune.js"></script>
+  <style>
+    #tabellaViaggi tr {
+      line-height: 4em;
+    }
+  </style>
+  <script>
+    function caricamento() {
+      controllaAutenticazione('Admin');
+      caricaViaggi();
+      caricaNavi();
+      caricaLinee();
+    }
+
+    function tornaIndietro() {
+      window.location.href = "homeAdmin.html";
+    }
+
+    function inserisciViaggio() {
+      const idNave = document.getElementById("nave").value;
+      const idLinea = document.getElementById("linea").value;
+      const dtPartenza = document.getElementById("partenza").value;
+      const dtArrivo = document.getElementById("arrivo").value;
+
+      if (!idNave || !idLinea || !dtPartenza || !dtArrivo) {
+        alert("Compila tutti i campi.");
+        return;
+      }
+
+      if (dtPartenza > dtArrivo) {
+        alert("Impossibile viaggiare nel tempo.");
+        return;
+      }
+
+      fetch(`http://localhost:8080/gestioneViaggi/inserisciViaggio?idNave=${idNave}&idLinea=${idLinea}&dtPartenza=${dtPartenza}&dtArrivo=${dtArrivo}`)
+        .then(res => res.text())
+        .then(() => {
+          alert("Viaggio inserito.");
+          document.getElementById("formViaggio").reset();
+          caricaViaggi();
+        });
+    }
+
+    function caricaViaggi() {
+      fetch("http://localhost:8080/gestioneViaggi/tuttiViaggi")
+        .then(res => res.json())
+        .then(viaggi => {
+          const tabella = document.getElementById("tabellaViaggi");
+
+          tabella.innerHTML = "";
+
+          const intestazione = document.createElement("tr");
+          intestazione.innerHTML = `
+            <th>ID</th>
+            <th>Nave</th>
+            <th>Linea</th>
+            <th>Partenza</th>
+            <th>Arrivo</th>
+            <th>Elimina</th>
+          `;
+          tabella.appendChild(intestazione);
+
+          viaggi.forEach(v => {
+            const riga = document.createElement("tr");
+            riga.innerHTML = `
+              <td>${v.id}</td>
+              <td>${v.nave.nome}</td>
+              <td>${v.linea.nome}</td>
+              <td>${v.dt_partenza}</td>
+              <td>${v.dt_arrivo}</td>
+              <td><button class="btn btn-danger btn-sm" onclick="eliminaViaggio(${v.id})">Elimina</button></td>
+            `;
+            tabella.appendChild(riga);
+          });
+        });
+    }
+
+    function caricaNavi() {
+      fetch("http://localhost:8080/gestioneNavi/tutte")
+        .then(res => res.json())
+        .then(navi => {
+          const select = document.getElementById("nave");
+          select.innerHTML = "";
+          navi.forEach(n => {
+            const option = document.createElement("option");
+            option.value = n.id;
+            option.textContent = `${n.nome} (${n.annoProduzione})`;
+            select.appendChild(option);
+          });
+        });
+    }
+
+    function caricaLinee() {
+      fetch("http://localhost:8080/gestionePorti/tutteLinea")
+        .then(res => res.json())
+        .then(linee => {
+          const select = document.getElementById("linea");
+          select.innerHTML = "";
+          linee.forEach(l => {
+            const option = document.createElement("option");
+            option.value = l.id;
+            option.textContent = `${l.nome} (${l.porto_partenza.porto} → ${l.porto_destinazione.porto})`;
+            select.appendChild(option);
+          });
+        });
+    }
+
+    function eliminaViaggio(id) {
+      if (confirm("Sei sicuro di voler eliminare questo viaggio?")) {
+        fetch(`http://localhost:8080/gestioneViaggi/eliminaViaggio?id=${id}`)
+          .then(res => res.text())
+          .then(() => {
+            alert("Viaggio eliminato.");
             caricaViaggi();
-            caricaNavi();
-            caricaLinee();
-        }
-
-        function tornaIndietro() {
-            window.location.href = "homeAdmin.html";
-        }
-
-        function inserisciViaggio() {
-            const idNave = document.getElementById("nave").value;
-            const idLinea = document.getElementById("linea").value;
-            const dtPartenza = document.getElementById("partenza").value;
-            const dtArrivo = document.getElementById("arrivo").value;
-
-            if (!idNave || !idLinea || !dtPartenza || !dtArrivo) {
-                alert("Compila tutti i campi.");
-                return;
-            }
-
-            if(dtPartenza > dtArrivo)
-            {
-                alert("Impossibile viaggiare nel tempo");
-                return;
-            }
-
-            fetch(`http://localhost:8080/gestioneViaggi/inserisciViaggio?idNave=${idNave}&idLinea=${idLinea}&dtPartenza=${dtPartenza}&dtArrivo=${dtArrivo}`)
-                .then(res => res.text())
-                .then(() => {
-                    alert("Viaggio inserito.");
-                    document.getElementById("formViaggio").reset();
-                    caricaViaggi();
-                });
-        }
-
-        function caricaViaggi() {
-            fetch("http://localhost:8080/gestioneViaggi/tuttiViaggi")
-                .then(res => res.json())
-                .then(viaggi => {
-                    const tabella = document.getElementById("tabellaViaggi");
-
-                    tabella.innerHTML = "";
-
-                    const intestazione = document.createElement("tr");
-                    const thId = document.createElement("th");
-                    thId.textContent = "ID";
-                    const thNave = document.createElement("th");
-                    thNave.textContent = "Nave";
-                    const thLinea = document.createElement("th");
-                    thLinea.textContent = "Linea";
-                    const thPartenza = document.createElement("th");
-                    thPartenza.textContent = "Partenza";
-                    const thArrivo = document.createElement("th");
-                    thArrivo.textContent = "Arrivo";
-                    const thElimina = document.createElement("th");
-                    thElimina.textContent = "Elimina";
-
-                    intestazione.append(thId, thNave, thLinea, thPartenza, thArrivo, thElimina);
-                    tabella.appendChild(intestazione);
-
-                    viaggi.forEach(v => {
-                        const riga = document.createElement("tr");
-
-                        riga.innerHTML = `
-                            <td>${v.id}</td>
-                            <td>${v.nave.nome}</td>
-                            <td>${v.linea.nome}</td>
-                            <td>${v.dt_partenza}</td>
-                            <td>${v.dt_arrivo}</td>
-                        `;
-
-                        const eliminaCell = document.createElement("td");
-                        const btn = document.createElement("button");
-                        btn.textContent = "Elimina";
-                        btn.onclick = () => eliminaViaggio(v.id);
-                        eliminaCell.appendChild(btn);
-                        riga.appendChild(eliminaCell);
-
-                        tabella.appendChild(riga);
-                    });
-                });
-        }
-
-        function caricaNavi() {
-            fetch("http://localhost:8080/gestioneNavi/tutte")
-                .then(res => res.json())
-                .then(navi => {
-                    const select = document.getElementById("nave");
-                    select.innerHTML = "";
-                    navi.forEach(n => {
-                        const option = document.createElement("option");
-                        option.value = n.id;
-                        option.textContent = `${n.nome} (${n.annoProduzione})`;
-                        select.appendChild(option);
-                    });
-                });
-        }
-
-        function caricaLinee() {
-            fetch("http://localhost:8080/gestionePorti/tutteLinea")
-                .then(res => res.json())
-                .then(linee => {
-                    const select = document.getElementById("linea");
-                    select.innerHTML = "";
-                    linee.forEach(l => {
-                        const option = document.createElement("option");
-                        option.value = l.id;
-                        option.textContent = `${l.nome} (${l.porto_partenza.porto} → ${l.porto_destinazione.porto})`;
-                        select.appendChild(option);
-                    });
-                });
-        }
-
-        function eliminaViaggio(id) {
-            if (confirm("Sei sicuro di voler eliminare questo viaggio?")) {
-                fetch(`http://localhost:8080/gestioneViaggi/eliminaViaggio?id=${id}`)
-                    .then(res => res.text())
-                    .then(() => {
-                        alert("Viaggio eliminato.");
-                        caricaViaggi();
-                    });
-            }
-        }
-    </script>
+          });
+      }
+    }
+  </script>
 </head>
 
-<body onload="caricamento()">
-    <h1>Gestione Viaggi</h1>
-    <button onclick="tornaIndietro()">Torna home</button>
+<body onload="caricamento()" class="bg-light">
 
-    <h2>Inserisci Nuovo Viaggio</h2>
-    <form id="formViaggio">
-        Nave:
-        <select id="nave" required></select>
-        Linea:
-        <select id="linea" required></select>
-        Data Partenza:
-        <input type="date" id="partenza" required>
-        Data Arrivo:
-        <input type="date" id="arrivo" required>
-        <button type="button" onclick="inserisciViaggio()">Inserisci</button>
-    </form>
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="text-primary">Gestione Viaggi</h1>
+      <button class="btn btn-secondary" onclick="tornaIndietro()">Torna home</button>
+    </div>
 
-    <h2>Lista Viaggi</h2>
-    <table id="tabellaViaggi"></table>
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        Inserisci Nuovo Viaggio
+      </div>
+      <div class="card-body">
+        <form id="formViaggio" class="row g-3">
+          <div class="col-md-6">
+            <label for="nave" class="form-label">Nave</label>
+            <select class="form-select" id="nave" required></select>
+          </div>
+          <div class="col-md-6">
+            <label for="linea" class="form-label">Linea</label>
+            <select class="form-select" id="linea" required></select>
+          </div>
+          <div class="col-md-6">
+            <label for="partenza" class="form-label">Data Partenza</label>
+            <input type="date" class="form-control" id="partenza" required>
+          </div>
+          <div class="col-md-6">
+            <label for="arrivo" class="form-label">Data Arrivo</label>
+            <input type="date" class="form-control" id="arrivo" required>
+          </div>
+          <div class="col-12">
+            <button type="button" class="btn btn-success" onclick="inserisciViaggio()">Inserisci</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <h2 class="mb-3">Lista Viaggi</h2>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered align-middle text-center" id="tabellaViaggi">
+      </table>
+    </div>
+  </div>
+
 </body>
 
 </html>
