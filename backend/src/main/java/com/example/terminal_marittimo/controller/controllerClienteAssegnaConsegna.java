@@ -29,9 +29,20 @@ public class controllerClienteAssegnaConsegna {
         return dao.trovaTutteAssegnazioniByID(id);
     }
 
+    @GetMapping("/tuttiIDAutista")
+    public ArrayList<Assegna_Consegna> trovaTuttiIDAutista(@RequestParam int id) {
+        return dao.trovaTutteAssegnazioniByIDAutista(id);
+    }
+
     @GetMapping("/elimina")
     public String elimina(@RequestParam int id) {
         dao.eliminaAssegnazione(id);
+        return "OK";
+    }
+
+    @GetMapping("/conferma")
+    public String conferma(@RequestParam int idConsegna, @RequestParam String codiceConferma, @RequestParam int idAutista, @RequestParam String targa) {
+        dao.conferma(idConsegna, codiceConferma, idAutista, targa);
         return "OK";
     }
 }

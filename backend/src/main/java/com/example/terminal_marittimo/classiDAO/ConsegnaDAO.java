@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 public class ConsegnaDAO {
 
-    public void inserisciConsegna(int idBuono, int idAutista, String targa, float peso) {
-        String sql = "INSERT INTO consegne (nbuono, id_autista, targa, peso) VALUES (?, ?, ?, ?)";
+    public void inserisciConsegna(int idBuono, int idAutista, String targa) {
+        String sql = "INSERT INTO consegne (nbuono, id_autista, targa, peso) VALUES (?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(database.URL, database.USER, database.PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -17,7 +17,6 @@ public class ConsegnaDAO {
             stmt.setInt(1, idBuono);
             stmt.setInt(2, idAutista);
             stmt.setString(3, targa);
-            stmt.setFloat(4, peso);
 
             stmt.executeUpdate();
 
@@ -29,7 +28,7 @@ public class ConsegnaDAO {
     public ArrayList<Consegna> trovaTutteConsegne() {
         ArrayList<Consegna> lista = new ArrayList<>();
     
-        String sql = "SELECT c.id_consegna AS id_consegna, c.dt_consegna AS data_consegna, c.peso AS peso_consegna, " +
+        String sql = "SELECT c.id_consegna AS id_consegna, c.dt_consegna AS data_consegna, " +
             "a.id AS id_autista, a.nome AS nome_autista, a.cognome AS cognome_autista, a.patente, a.password, " +
             "cam.targa, cam.marca, cam.modello, cam.colore, " +
             "b.nbuono AS id_buono, b.dt_emissione_buono AS data_buono, b.peso AS peso_buono, b.codice_conferma, " +
@@ -173,7 +172,6 @@ public class ConsegnaDAO {
                     rs.getInt("id_consegna"),
                     buono,
                     rs.getString("data_consegna"),
-                    rs.getFloat("peso_consegna"),
                     autista,
                     camion
                 );

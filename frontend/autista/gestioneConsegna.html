@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Consegne</title>
+    <script src="../scriptComune.js"></script>
+    <script>
+        function inizializza() {
+            controllaAutenticazione('Autista');
+            caricaConsegne();
+        }
+
+        function caricaConsegne() {
+            const utente = JSON.parse(sessionStorage.getItem("utente"));
+            if (!utente || !utente.id) {
+                alert("Utente non autenticato.");
+                return;
+            }
+
+            fetch(`http://localhost:8080/gestioneAssegnazioni/tuttiIDAutista?id=${utente.id}`)
+                .then(res => res.json())
+                .then(consegne => {
+                    const tabella = document.getElementById("tabellaConsegne");
+
+                    tabella.innerHTML = `
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Buono</th>
+                            <th>Azioni</th>
+                        </tr>
+                    `;
+
+                    consegne.forEach(c => {
+                        const riga = document.createElement("tr");
+                        riga.innerHTML = `
+                            <td>${c.cliente.nome} ${c.cliente.cognome}</td>
+                            <td>Buono ${c.buono.id} - ${c.buono.peso} kg</td>
+                            <td>
+                                <button onclick="mostraFormConferma(this)">Conferma</button>
+                                <div class="formConferma">
+                                    <label>Camion:</label>
+                                    <select class="selectCamion"></select><br>
+                                    <label>Codice Conferma:</label>
+                                    <input type="text" class="codiceConferma" placeholder="Codice conferma" />
+                                    <button onclick="confermaConsegna(${c.id}, this)">Salva</button>
+                                </div>
+                            </td>
+                        `;
+                        tabella.appendChild(riga);
+                    });
+
+                    popolaSelectCamion();
+                })
+                .catch(() => {
+                    alert("Errore nel recupero delle consegne.");
+                });
+        }
+
+        function popolaSelectCamion() {
+            fetch("http://localhost:8080/gestioneCamion/tutti")
+                .then(res => res.json())
+                .then(camion => {
+                    document.querySelectorAll(".selectCamion").forEach(select => {
+                        select.innerHTML = `<option value="">Seleziona camion</option>`;
+                        camion.forEach(c => {
+                            const option = document.createElement("option");
+                            option.value = c.targa;
+                            option.textContent = `${c.targa} - ${c.modello}`;
+                            select.appendChild(option);
+                        });
+                    });
+                });
+        }
+
+        function mostraFormConferma(bottone) {
+            const form = bottone.nextElementSibling;
+            const visibile = getComputedStyle(form).display !== "none";
+            form.style.display = visibile ? "none" : "block";
+        }
+
+        function confermaConsegna(idConsegna, btnSalva) {
+            const form = btnSalva.parentElement;
+            const selectCamion = form.querySelector(".selectCamion");
+            const codice = form.querySelector(".codiceConferma").value;
+
+            const idCamion = selectCamion.value;
+            const idAutista = JSON.parse(sessionStorage.getItem("utente")).id;
+
+            if (!idCamion || !codice.trim()) {
+                alert("Seleziona un camion e inserisci il codice di conferma.");
+                return;
+            }
+
+            fetch(`http://localhost:8080/gestioneAssegnazioni/conferma?idConsegna=${idConsegna}&codiceConferma=${codice}&targa=${idCamion}&idAutista=${idAutista}`)
+                .then(res => {
+                    if (res.ok) {
+                        alert("Consegna confermata con successo!");
+                        caricaConsegne();
+                    } else {
+                        alert("Errore nella conferma della consegna.");
+                    }
+                });
+        }
+
+    </script>
+    <style>
+        .formConferma {
+            display: none;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body onload="inizializza()">
+
+    <h1>Gestione Consegne</h1>
+    <button onclick="window.location.href='homeAutista.html'">Torna alla home</button>
+
+    <h2>Consegne Assegnate</h2>
+    <table id="tabellaConsegne"></table>
+
+</body>
+</html>

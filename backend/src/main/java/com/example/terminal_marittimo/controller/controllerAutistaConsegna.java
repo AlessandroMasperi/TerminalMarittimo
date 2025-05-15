@@ -13,8 +13,8 @@ public class controllerAutistaConsegna {
     private final ConsegnaDAO dao = new ConsegnaDAO();
 
     @GetMapping("/inserisci")
-    public String inserisci(@RequestParam int idBuono,@RequestParam float peso,@RequestParam int idAutista,@RequestParam String targa) {
-        dao.inserisciConsegna(idBuono, idAutista, targa, peso);
+    public String inserisci(@RequestParam int idBuono,@RequestParam int idAutista,@RequestParam String targa) {
+        dao.inserisciConsegna(idBuono, idAutista, targa);
         return "OK";
     }
 
