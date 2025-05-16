@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestione Polizze</title>
+    <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+    <script src="../bootstrap/bootstrap.js"></script>
     <script src="../scriptComune.js"></script>
     <script>
         function caricamento() {
@@ -64,12 +66,16 @@
                     const tabella = document.getElementById("tabellaPolizze");
                     tabella.innerHTML = "";
 
-                    const header = document.createElement("tr");
+                    const header = document.createElement("thead");
                     header.innerHTML = `
-                        <th>Viaggio</th><th>Fornitore</th><th>Cliente</th>
-                        <th>Merce</th><th>Peso (kg)</th><th>Franchigia (gg)</th><th>Costo/giorno</th><th>Elimina</th>
-                    `;
+                        <tr>
+                            <th>Viaggio</th><th>Fornitore</th><th>Cliente</th>
+                            <th>Merce</th><th>Peso (kg)</th><th>Franchigia (gg)</th>
+                            <th>Costo/giorno</th><th>Elimina</th>
+                        </tr>`;
                     tabella.appendChild(header);
+
+                    const corpo = document.createElement("tbody");
 
                     polizze.forEach(p => {
                         const riga = document.createElement("tr");
@@ -80,18 +86,20 @@
                             <td>${p.merce.tipo}</td>
                             <td>${p.peso}</td>
                             <td>${p.gg_franchigia}</td>
-                            <td>${p.costo_gg}</td>
-                        `;
+                            <td>${p.costo_gg}</td>`;
 
                         const cellElimina = document.createElement("td");
                         const btn = document.createElement("button");
                         btn.textContent = "Elimina";
+                        btn.className = "btn btn-danger btn-sm";
                         btn.onclick = () => eliminaPolizza(p.id);
                         cellElimina.appendChild(btn);
                         riga.appendChild(cellElimina);
 
-                        tabella.appendChild(riga);
+                        corpo.appendChild(riga);
                     });
+
+                    tabella.appendChild(corpo);
                 });
         }
 
@@ -168,31 +176,56 @@
     </script>
 </head>
 
-<body onload="caricamento()">
-    <h1>Gestione Polizze</h1>
-    <button onclick="tornaIndietro()">Torna home</button>
+<body onload="caricamento()" class="container py-4">
+    <h1 class="mb-4">Gestione Polizze</h1>
+    <button onclick="tornaIndietro()" class="btn btn-secondary mb-4">Torna alla Home</button>
 
-    <h2>Inserisci Nuova Polizza</h2>
-    <form id="formPolizza">
-        Viaggio:
-        <select id="viaggio" required></select>
-        Fornitore:
-        <select id="fornitore" required></select>
-        Cliente:
-        <select id="cliente" required></select>
-        Merce:
-        <select id="merce" required></select>
-        Peso (kg):
-        <input type="number" id="peso" min="0" required>
-        Giorni di Franchigia:
-        <input type="number" id="franchigia" min="0" required>
-        Costo al giorno (€):
-        <input type="number" step="0.5" id="costo" min="0" required>
-        <button type="button" onclick="inserisciPolizza()">Inserisci</button>
-    </form>
+    <div class="card mb-5">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Inserisci Nuova Polizza</h2>
+        </div>
+        <div class="card-body">
+            <form id="formPolizza" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Viaggio</label>
+                    <select id="viaggio" class="form-select" required></select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Fornitore</label>
+                    <select id="fornitore" class="form-select" required></select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Cliente</label>
+                    <select id="cliente" class="form-select" required></select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Merce</label>
+                    <select id="merce" class="form-select" required></select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Peso (kg)</label>
+                    <input type="number" id="peso" class="form-control" min="0" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Giorni di Franchigia</label>
+                    <input type="number" id="franchigia" class="form-control" min="0" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Costo al giorno (€)</label>
+                    <input type="number" id="costo" class="form-control" step="0.5" min="0" required>
+                </div>
+                <div class="col-12">
+                    <button type="button" onclick="inserisciPolizza()" class="btn btn-primary">Inserisci</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    <h2>Lista Polizze</h2>
-    <table id="tabellaPolizze"></table>
+    <h2 class="h4">Lista Polizze</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle" id="tabellaPolizze"></table>
+    </div>
+
 </body>
 
 </html>

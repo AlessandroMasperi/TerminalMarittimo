@@ -4,19 +4,24 @@
   <meta charset="UTF-8">
   <title>Home Fornitore</title>
   <script src="../scriptComune.js"></script>
+  <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+  <script src="../bootstrap/bootstrap.js"></script>
   <script>
-    function vaiAGestionePolizze() 
-    {
+    function vaiAGestionePolizze() {
       window.location.href = "gestionePolizze.html";
     }
   </script>
 </head>
-<body onload="controllaAutenticazione('Fornitore')">
+<body onload="controllaAutenticazione('Fornitore')" class="bg-light">
 
-  <h1>Benvenuto, Fornitore</h1>
+  <div class="container mt-5 text-center">
+    <h1 class="mb-4">Benvenuto, Fornitore</h1>
 
-  <button onclick="vaiAGestionePolizze()">Gestione Polizze Carico</button>
+    <div class="d-grid gap-3 col-6 mx-auto">
+      <button onclick="vaiAGestionePolizze()" class="btn btn-primary btn-lg">Gestione Polizze Carico</button>
+      <button onclick="logout()" class="btn btn-danger btn-lg">Logout</button>
+    </div>
+  </div>
 
-  <button onclick="logout()">Logout</button>
 </body>
 </html>

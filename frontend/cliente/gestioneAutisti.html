@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
     <meta charset="UTF-8">
     <title>Gestione Autisti</title>
+    <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+    <script src="../bootstrap/bootstrap.js"></script>
     <script src="../scriptComune.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script>
@@ -12,46 +13,27 @@
             caricaAutisti();
         }
 
-        function tornaIndietro()
-        {
+        function tornaIndietro() {
             window.location.href = "homeCliente.html";
         }
 
         function inserisciAutista() {
-            const nome = document.getElementById("nome").value;
-            const cognome = document.getElementById("cognome").value;
-            const patente = document.getElementById("patente").value;
-            const password = document.getElementById("password").value;
+            const nome = document.getElementById("nome").value.trim();
+            const cognome = document.getElementById("cognome").value.trim();
+            const patente = document.getElementById("patente").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            if (!nome || !cognome || !patente || !password) {
+                alert("Compila tutti i campi.");
+                return;
+            }
+
             const passwordHash = CryptoJS.MD5(password).toString();
-
-            if (nome.trim() === "") 
-            {
-                alert("Il nome è obbligatorio.");
-                return;
-            }
-
-            if (cognome.trim() === "") 
-            {
-                alert("Il cognome è obbligatorio.");
-                return;
-            }
-
-            if (patente.trim() === "") 
-            {
-                alert("La patente è obbligatoria.");
-                return;
-            }
-
-            if (password.trim() === "") 
-            {
-                alert("La password è obbligatoria.");
-                return;
-            }
 
             fetch(`http://localhost:8080/gestioneAutisti/inserisci?nome=${nome}&cognome=${cognome}&patente=${patente}&password=${passwordHash}`)
                 .then(res => res.text())
-                .then(msg => {
-                    alert("Autista inserito.");
+                .then(() => {
+                    alert("Autista inserito con successo.");
                     document.getElementById("formAutista").reset();
                     caricaAutisti();
                 });
@@ -63,48 +45,33 @@
                 .then(autisti => {
                     const tabella = document.getElementById("tabellaAutisti");
 
-                    tabella.innerHTML = "";
-                    const rigaIntestazione = document.createElement("tr");
-                    const intestazioneID = document.createElement("th");
-                    intestazioneID.textContent = 'ID';
-                    rigaIntestazione.appendChild(intestazioneID);
-                    const intestazioneNome = document.createElement("th");
-                    intestazioneNome.textContent = 'Nome';
-                    rigaIntestazione.appendChild(intestazioneNome);
-                    const intestazioneCognome = document.createElement("th");
-                    intestazioneCognome.textContent = 'Cognome';
-                    rigaIntestazione.appendChild(intestazioneCognome);
-                    const intestazionePatente = document.createElement("th");
-                    intestazionePatente.textContent = 'Patente';
-                    rigaIntestazione.appendChild(intestazionePatente);
-                    const intestazioneElimina = document.createElement("th");
-                    intestazioneElimina.textContent = 'Elimina';
-                    rigaIntestazione.appendChild(intestazioneElimina);
-                    tabella.appendChild(rigaIntestazione);
+                    tabella.innerHTML = `
+                        <thead class="table-primary">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Cognome</th>
+                                <th>Patente</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    `;
+
+                    const tbody = tabella.querySelector("tbody");
 
                     autisti.forEach(autista => {
                         const riga = document.createElement("tr");
-
-                        const idCell = document.createElement("td");
-                        idCell.textContent = autista.id;
-
-                        const nomeCell = document.createElement("td");
-                        nomeCell.textContent = autista.nome;
-
-                        const cognomeCell = document.createElement("td");
-                        cognomeCell.textContent = autista.cognome;
-
-                        const patenteCell = document.createElement("td");
-                        patenteCell.textContent = autista.patente;
-
-                        const eliminaCell = document.createElement("td");
-                        const eliminaBtn = document.createElement("button");
-                        eliminaBtn.textContent = "Elimina";
-                        eliminaBtn.addEventListener("click", () => eliminaAutista(autista.id));
-                        eliminaCell.appendChild(eliminaBtn);
-
-                        riga.append(idCell, nomeCell, cognomeCell, patenteCell, eliminaCell);
-                        tabella.appendChild(riga);
+                        riga.innerHTML = `
+                            <td>${autista.id}</td>
+                            <td>${autista.nome}</td>
+                            <td>${autista.cognome}</td>
+                            <td>${autista.patente}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="eliminaAutista(${autista.id})">Elimina</button>
+                            </td>
+                        `;
+                        tbody.appendChild(riga);
                     });
                 });
         }
@@ -121,23 +88,42 @@
         }
     </script>
 </head>
+<body onload="caricamento()" class="bg-light">
 
-<body onload="caricamento()">
-    <h1>Gestione Autisti</h1>
-    <button onclick="tornaIndietro()">Torna home</button>
-    
-    <h2>Inserisci Nuovo Autista</h2>
-    <form id="formAutista">
-        Nome: <input type="text" id="nome" required>
-        Cognome: <input type="text" id="cognome" required>
-        Patente: <input type="text" id="patente" maxlength="10" required>
-        Password: <input type="password" id="password" required>
-        <button type="submit" onclick="inserisciAutista()">Inserisci</button>
-    </form>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-primary">Gestione Autisti</h1>
+            <button class="btn btn-secondary" onclick="tornaIndietro()">Torna alla home</button>
+        </div>
 
-    <h2>Lista Autisti</h2>
-    <table id="tabellaAutisti">
-    </table>
+        <h2 class="mb-3">Inserisci Nuovo Autista</h2>
+        <form id="formAutista" class="row g-3 mb-5">
+            <div class="col-md-3">
+                <label class="form-label">Nome</label>
+                <input type="text" id="nome" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Cognome</label>
+                <input type="text" id="cognome" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Patente</label>
+                <input type="text" id="patente" class="form-control" maxlength="10" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Password</label>
+                <input type="password" id="password" class="form-control" required>
+            </div>
+            <div class="col-12">
+                <button type="button" class="btn btn-primary" onclick="inserisciAutista()">Inserisci</button>
+            </div>
+        </form>
+
+        <h2 class="mb-3">Lista Autisti</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered text-center align-middle" id="tabellaAutisti"></table>
+        </div>
+    </div>
+
 </body>
-
 </html>

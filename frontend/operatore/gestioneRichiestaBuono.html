@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestione Richieste Buoni</title>
+    <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+    <script src="../bootstrap/bootstrap.js"></script>
+
     <script src="../scriptComune.js"></script>
     <script>
         function caricamento() {
@@ -23,7 +26,7 @@
                     tabella.innerHTML = "";
 
                     const intestazione = document.createElement("tr");
-                    ["ID", "Utente", "Importo", "Data Richiesta", "Approva", "Rifiuta"].forEach(etichetta => {
+                    ["ID", "Utente", "Fornitore", "Merce", "Peso", "Date Viaggio", "Tratta", "Approva", "Rifiuta"].forEach(etichetta => {
                         const th = document.createElement("th");
                         th.textContent = etichetta;
                         intestazione.appendChild(th);
@@ -38,15 +41,15 @@
                         riga.appendChild(id);
 
                         const cliente = document.createElement("td");
-                        cliente.textContent = `${richiesta.cliente.nome} ${richiesta.cliente.cognome} (${richiesta.cliente.nomeAzienda})`;
+                        cliente.textContent = `${richiesta.c.nome} ${richiesta.c.cognome} (${richiesta.c.nomeAzienda})`;
                         riga.appendChild(cliente);
 
                         const fornitore = document.createElement("td");
-                        fornitore.textContent = `${richiesta.polizza.fornitore.nome} (${richiesta.polizza.fornitore.nomeAzienda})`;
+                        fornitore.textContent = `${richiesta.p.fornitore.nome} (${richiesta.p.fornitore.nomeAzienda})`;
                         riga.appendChild(fornitore);
 
                         const merce = document.createElement("td");
-                        merce.textContent = richiesta.polizza.merce.tipo;
+                        merce.textContent = richiesta.p.merce.tipo;
                         riga.appendChild(merce);
 
                         const peso = document.createElement("td");
@@ -54,23 +57,32 @@
                         riga.appendChild(peso);
 
                         const date = document.createElement("td");
-                        date.textContent = `${richiesta.polizza.viaggio.dataPartenza} → ${richiesta.polizza.viaggio.dataArrivo}`;
+                        date.textContent = `${richiesta.p.viaggio.dataPartenza} → ${richiesta.p.viaggio.dataArrivo}`;
                         riga.appendChild(date);
 
                         const tratta = document.createElement("td");
-                        tratta.textContent = `${richiesta.polizza.viaggio.linea.portoPartenza.porto} (${richiesta.polizza.viaggio.linea.portoPartenza.nazione}) → ${richiesta.polizza.viaggio.linea.portoDestinazione.porto} (${richiesta.polizza.viaggio.linea.portoDestinazione.nazione})`;
+                        tratta.textContent = `${richiesta.p.viaggio.linea.porto_partenza.porto} (${richiesta.p.viaggio.linea.porto_partenza.nazione}) → ${richiesta.p.viaggio.linea.porto_destinazione.porto} (${richiesta.p.viaggio.linea.porto_destinazione.nazione})`;
                         riga.appendChild(tratta);
 
                         // Bottone approva
                         const approvaTd = document.createElement("td");
                         const approvaBtn = document.createElement("button");
                         approvaBtn.textContent = "Approva";
-                        approvaBtn.classList.add("btn", "btn-success");
+                        approvaBtn.classList.add("btn", "btn-success", "btn-sm");
                         approvaBtn.addEventListener("click", () => approvaRichiesta(richiesta.id));
                         approvaTd.appendChild(approvaBtn);
                         riga.appendChild(approvaTd);
 
-                        document.querySelector("#tabellaRichieste tbody").appendChild(riga);
+                        // Bottone rifiuta
+                        const rifiutaTd = document.createElement("td");
+                        const rifiutaBtn = document.createElement("button");
+                        rifiutaBtn.textContent = "Rifiuta";
+                        rifiutaBtn.classList.add("btn", "btn-danger", "btn-sm");
+                        rifiutaBtn.addEventListener("click", () => rifiutaRichiesta(richiesta.id));
+                        rifiutaTd.appendChild(rifiutaBtn);
+                        riga.appendChild(rifiutaTd);
+
+                        tabella.appendChild(riga);
                     });
 
                 });
@@ -100,12 +112,33 @@
     </script>
 </head>
 
-<body onload="caricamento()">
-    <h1>Gestione Richieste Buoni</h1>
-    <button onclick="tornaIndietro()">Torna home</button>
+<body onload="caricamento()" class="bg-light">
+    <div class="container py-4">
+        <h1 class="mb-4 text-center">Gestione Richieste Buoni</h1>
 
-    <h2>Lista Richieste</h2>
-    <table id="tabellaRichieste"></table>
+        <div class="mb-4">
+            <button class="btn btn-primary" onclick="tornaIndietro()">← Torna home</button>
+        </div>
+
+        <h2 class="mb-3">Lista Richieste</h2>
+        <div class="table-responsive">
+            <table id="tabellaRichieste" class="table table-bordered table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Utente</th>
+                        <th>Importo</th>
+                        <th>Data Richiesta</th>
+                        <th>Approva</th>
+                        <th>Rifiuta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- righe generate dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 
 </html>

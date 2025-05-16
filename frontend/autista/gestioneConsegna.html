@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestione Consegne</title>
+    <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+    <script src="../bootstrap/bootstrap.js"></script>
     <script src="../scriptComune.js"></script>
+    <style>
+        .formConferma {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
     <script>
         function inizializza() {
             controllaAutenticazione('Autista');
@@ -23,12 +31,17 @@
                     const tabella = document.getElementById("tabellaConsegne");
 
                     tabella.innerHTML = `
-                        <tr>
-                            <th>Cliente</th>
-                            <th>Buono</th>
-                            <th>Azioni</th>
-                        </tr>
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Buono</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
                     `;
+
+                    const tbody = tabella.querySelector("tbody");
 
                     consegne.forEach(c => {
                         const riga = document.createElement("tr");
@@ -36,17 +49,17 @@
                             <td>${c.cliente.nome} ${c.cliente.cognome}</td>
                             <td>Buono ${c.buono.id} - ${c.buono.peso} kg</td>
                             <td>
-                                <button onclick="mostraFormConferma(this)">Conferma</button>
-                                <div class="formConferma">
-                                    <label>Camion:</label>
-                                    <select class="selectCamion"></select><br>
-                                    <label>Codice Conferma:</label>
-                                    <input type="text" class="codiceConferma" placeholder="Codice conferma" />
-                                    <button onclick="confermaConsegna(${c.id}, this)">Salva</button>
+                                <button class="btn btn-outline-primary btn-sm mb-1" onclick="mostraFormConferma(this)">Conferma</button>
+                                <div class="formConferma border p-2 rounded bg-light">
+                                    <label class="form-label">Camion:</label>
+                                    <select class="form-select selectCamion mb-2"></select>
+                                    <label class="form-label">Codice Conferma:</label>
+                                    <input type="text" class="form-control codiceConferma mb-2" placeholder="Codice conferma" />
+                                    <button class="btn btn-success btn-sm" onclick="confermaConsegna(${c.id}, this)">Salva</button>
                                 </div>
                             </td>
                         `;
-                        tabella.appendChild(riga);
+                        tbody.appendChild(riga);
                     });
 
                     popolaSelectCamion();
@@ -101,22 +114,23 @@
                     }
                 });
         }
-
     </script>
-    <style>
-        .formConferma {
-            display: none;
-            margin-top: 5px;
-        }
-    </style>
 </head>
-<body onload="inizializza()">
+<body onload="inizializza()" class="bg-light">
 
-    <h1>Gestione Consegne</h1>
-    <button onclick="window.location.href='homeAutista.html'">Torna alla home</button>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-primary">Gestione Consegne</h1>
+            <button class="btn btn-secondary" onclick="window.location.href='homeAutista.html'">Torna alla home</button>
+        </div>
 
-    <h2>Consegne Assegnate</h2>
-    <table id="tabellaConsegne"></table>
+        <h2 class="mb-3">Consegne Assegnate</h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered align-middle text-center" id="tabellaConsegne">
+            </table>
+        </div>
+    </div>
 
 </body>
 </html>

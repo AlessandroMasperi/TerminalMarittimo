@@ -1,30 +1,40 @@
 <!DOCTYPE html>
 <html lang="it">
-    <head>
-        <meta charset="UTF-8">
-        <title>Home Operatore</title>
-        <script src="../scriptComune.js"></script>
-        <script>
-            function vaiAGestioneClienti() {
-                window.location.href = "gestioneClienti.html";
-            }
-            function vaiAGestioneFornitori() {
-                window.location.href = "gestioneFornitori.html";
-            }
-            function vaiAGestioneBuoni() 
-            {
-                window.location.href = "gestioneBuono.html";
-            }
-        </script>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <title>Home Operatore</title>
 
-    <body onload="controllaAutenticazione('Operatore')">
+    <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+    <script src="../bootstrap/bootstrap.js"></script>
 
-        <h1>Benvenuto, Operatore</h1>
+    <script src="../scriptComune.js"></script>
+    <script>
+        function vaiAGestioneClienti() {
+            window.location.href = "gestioneClienti.html";
+        }
+        function vaiAGestioneFornitori() {
+            window.location.href = "gestioneFornitori.html";
+        }
+        function vaiAGestioneBuoni() {
+            window.location.href = "gestioneRichiestaBuono.html";
+        }
+    </script>
+</head>
 
-        <button onclick="vaiAGestioneClienti()">Gestione Clienti</button>
-        <button onclick="vaiAGestioneFornitori()">Gestione Fornitori</button>
-        <button onclick="vaiAGestioneBuoni()">Gestione Approvazione Buoni</button>
-        <button onclick="logout()">Logout</button>
-    </body>
+<body onload="controllaAutenticazione('Operatore')" class="bg-light">
+
+    <div class="container text-center mt-5">
+        <div class="card shadow p-4">
+            <h1 class="mb-4 text-primary">Benvenuto, Operatore</h1>
+
+            <div class="d-grid gap-3 col-6 mx-auto">
+                <button class="btn btn-outline-primary btn-lg" onclick="vaiAGestioneClienti()">Gestione Clienti</button>
+                <button class="btn btn-outline-secondary btn-lg" onclick="vaiAGestioneFornitori()">Gestione Fornitori</button>
+                <button class="btn btn-outline-success btn-lg" onclick="vaiAGestioneBuoni()">Gestione Approvazione Buoni</button>
+                <button class="btn btn-danger btn-lg" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+</body>
 </html>

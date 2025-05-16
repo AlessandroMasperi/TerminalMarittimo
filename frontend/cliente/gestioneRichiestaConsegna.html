@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <title>Gestione Richieste Consegna</title>
     <script src="../scriptComune.js"></script>
+    <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+    <script src="../bootstrap/bootstrap.js"></script>
     <script>
-        function inizializza() 
-        {
+        function inizializza() {
             controllaAutenticazione('Cliente');
             caricaRichieste();
             caricaAutisti();
@@ -26,12 +27,17 @@
                     const tabella = document.getElementById("tabellaRichieste");
 
                     tabella.innerHTML = `
-                        <tr>
-                            <th>Autista</th>
-                            <th>ID Buono</th>
-                            <th>Azioni</th>
-                        </tr>
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Autista</th>
+                                <th>ID Buono</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
                     `;
+
+                    const tbody = tabella.querySelector("tbody");
 
                     richieste.forEach(r => {
                         const riga = document.createElement("tr");
@@ -39,10 +45,10 @@
                             <td>${r.autista.nome} ${r.autista.cognome}</td>
                             <td>${r.buono.id}</td>
                             <td>
-                                <button onclick="eliminaRichiesta(${r.id})">Elimina</button>
+                                <button class="btn btn-danger btn-sm" onclick="eliminaRichiesta(${r.id})">Elimina</button>
                             </td>
                         `;
-                        tabella.appendChild(riga);
+                        tbody.appendChild(riga);
                     });
                 })
                 .catch(() => {
@@ -115,22 +121,41 @@
         }
     </script>
 </head>
-<body onload="inizializza()">
+<body onload="inizializza()" class="bg-light">
 
-    <h1>Gestione Richieste di Consegna</h1>
-    <button onclick="window.location.href='homeCliente.html'">Torna alla home</button>
+    <div class="container py-4">
+        <h1 class="mb-4 text-center">Gestione Richieste di Consegna</h1>
 
-    <h2>Nuova Assegnazione</h2>
-    <label for="selectBuono">Buono:</label>
-    <select id="selectBuono" required></select><br>
+        <div class="d-flex justify-content-end mb-3">
+            <button class="btn btn-secondary" onclick="window.location.href='homeCliente.html'">Torna alla home</button>
+        </div>
 
-    <label for="selectAutista">Autista:</label>
-    <select id="selectAutista" required></select><br>
+        <div class="card mb-5">
+            <div class="card-header bg-primary text-white">
+                Nuova Assegnazione
+            </div>
+            <div class="card-body">
+                <form onsubmit="event.preventDefault(); assegnaConsegna();">
+                    <div class="mb-3">
+                        <label for="selectBuono" class="form-label">Buono</label>
+                        <select id="selectBuono" class="form-select" required></select>
+                    </div>
 
-    <button onclick="assegnaConsegna()">Assegna Consegna</button>
+                    <div class="mb-3">
+                        <label for="selectAutista" class="form-label">Autista</label>
+                        <select id="selectAutista" class="form-select" required></select>
+                    </div>
 
-    <h2>Assegnazioni Effettuate</h2>
-    <table id="tabellaRichieste"></table>
+                    <button type="submit" class="btn btn-success">Assegna Consegna</button>
+                </form>
+            </div>
+        </div>
+
+        <h2 class="mb-3">Assegnazioni Effettuate</h2>
+        <div class="table-responsive">
+            <table id="tabellaRichieste" class="table table-bordered table-striped"></table>
+        </div>
+    </div>
 
 </body>
 </html>

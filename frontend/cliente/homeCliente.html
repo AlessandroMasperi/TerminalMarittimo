@@ -1,38 +1,42 @@
 <!DOCTYPE html>
 <html lang="it">
-    <head>
-        <meta charset="UTF-8">
-        <title>Home Cliente</title>
-        <script src="../scriptComune.js"></script>
-        <script>
-            function vaiAGestioneAutisti() {
-                window.location.href = "gestioneAutisti.html";
-            }
+<head>
+  <meta charset="UTF-8">
+  <title>Home Cliente</title>
+  <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+  <script src="../bootstrap/bootstrap.js"></script>
+  <script src="../scriptComune.js"></script>
+  <script>
+    function vaiAGestioneAutisti() {
+      window.location.href = "gestioneAutisti.html";
+    }
 
-            function vaiAGestioneCamion() {
-                window.location.href = "gestioneCamion.html";
-            }
+    function vaiAGestioneCamion() {
+      window.location.href = "gestioneCamion.html";
+    }
 
-            function vaiAGestioneRichiestaBuono() 
-            {
-                window.location.href = "gestioneRichiestaBuono.html";
-            }
+    function vaiAGestioneRichiestaBuono() {
+      window.location.href = "gestioneRichiestaBuono.html";
+    }
 
-            function vaiAGestioneRichiesteConsegna() 
-            {
-                window.location.href = "gestioneRichiestaConsegna.html";
-            }
-        </script>
-    </head>
+    function vaiAGestioneRichiesteConsegna() {
+      window.location.href = "gestioneRichiestaConsegna.html";
+    }
+  </script>
+</head>
+<body onload="controllaAutenticazione('Cliente')" class="bg-light">
 
-    <body onload="controllaAutenticazione('Cliente')">
+  <div class="container py-4 text-center">
+    <h1 class="mb-4 text-primary">Benvenuto, Cliente</h1>
 
-        <h1>Benvenuto, Cliente</h1>
+    <div class="d-grid gap-3 col-6 mx-auto">
+      <button class="btn btn-primary btn-lg" onclick="vaiAGestioneAutisti()">Gestione Autisti</button>
+      <button class="btn btn-primary btn-lg" onclick="vaiAGestioneCamion()">Gestione Camion Autorizzati</button>
+      <button class="btn btn-primary btn-lg" onclick="vaiAGestioneRichiestaBuono()">Gestione Richiesta Buono</button>
+      <button class="btn btn-primary btn-lg" onclick="vaiAGestioneRichiesteConsegna()">Gestione Assegnazione Consegne</button>
+      <button class="btn btn-danger btn-lg" onclick="logout()">Logout</button>
+    </div>
+  </div>
 
-        <button onclick="vaiAGestioneAutisti()">Gestione Autisti</button>
-        <button onclick="vaiAGestioneCamion()">Gestione Camion Autorizzati</button>
-        <button onclick="vaiAGestioneRichiestaBuono()">Gestione Richiesta Buono</button>
-        <button onclick="vaiAGestioneRichiesteConsegna()">Gestione Azzegnazione Consegne</button>
-        <button onclick="logout()">Logout</button>
-    </body>
+</body>
 </html>

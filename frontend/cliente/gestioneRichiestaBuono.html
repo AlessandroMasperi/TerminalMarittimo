@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Gestione Polizze</title>
     <script src="../scriptComune.js"></script>
+    <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+    <script src="../bootstrap/bootstrap.js"></script>
     <script>
         function inizializza() {
             controllaAutenticazione('Cliente');
@@ -25,13 +27,18 @@
                     const tabella = document.getElementById("tabellaPolizze");
 
                     tabella.innerHTML = `
-                        <tr>
-                            <th>Fornitore</th>
-                            <th>Merce</th>
-                            <th>Peso</th>
-                            <th>Azioni</th>
-                        </tr>
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Fornitore</th>
+                                <th>Merce</th>
+                                <th>Peso</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
                     `;
+
+                    const corpoTabella = tabella.querySelector("tbody");
 
                     polizze.forEach(p => {
                         const riga = document.createElement("tr");
@@ -40,15 +47,15 @@
                             <td>${p.merce.tipo}</td>
                             <td>${p.peso} kg</td>
                             <td>
-                                <button onclick="eliminaPolizza(${p.id})">Elimina</button>
-                                <button onclick="mostraFormBuono(this)">Crea Buono</button>
-                                <div class="formBuono">
-                                    <input type="number" placeholder="Quantità" min="1" />
-                                    <button onclick="salvaBuono(${idUtente}, ${p.id}, this)">Salva</button>
+                                <button class="btn btn-danger btn-sm me-2" onclick="eliminaPolizza(${p.id})">Elimina</button>
+                                <button class="btn btn-primary btn-sm" onclick="mostraFormBuono(this)">Crea Buono</button>
+                                <div class="formBuono mt-2">
+                                    <input type="number" class="form-control form-control-sm mb-2" placeholder="Quantità" min="1" />
+                                    <button class="btn btn-success btn-sm" onclick="salvaBuono(${idUtente}, ${p.id}, this)">Salva</button>
                                 </div>
                             </td>
                         `;
-                        tabella.appendChild(riga);
+                        corpoTabella.appendChild(riga);
                     });
                 })
                 .catch(() => {
@@ -100,12 +107,16 @@
         }
     </style>
 </head>
-<body onload="inizializza()">
+<body onload="inizializza()" class="bg-light">
 
-    <h1>Gestione Polizze</h1>
-    <button onclick="window.location.href='homeCliente.html'">Torna alla home</button>
+    <div class="container py-4">
+        <h1 class="mb-4">Gestione Polizze</h1>
+        <button class="btn btn-secondary mb-4" onclick="window.location.href='homeCliente.html'">Torna alla home</button>
 
-    <h2>Lista Polizze</h2>
-    <table id="tabellaPolizze"></table>
+        <h2 class="mb-3">Lista Polizze</h2>
+        <div class="table-responsive">
+            <table id="tabellaPolizze" class="table table-bordered table-hover align-middle"></table>
+        </div>
+    </div>
 </body>
 </html>

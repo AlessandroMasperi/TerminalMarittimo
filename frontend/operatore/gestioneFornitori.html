@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestione Fornitori</title>
+    <link rel="stylesheet" href="../bootstrap/bootstrap.css">
+    <script src="../bootstrap/bootstrap.js"></script>
     <script src="../scriptComune.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script>
@@ -26,26 +28,22 @@
             const password = document.getElementById("password").value;
             const passwordHash = CryptoJS.MD5(password).toString();
 
-            if (nome.trim() === "") 
-            {
+            if (nome.trim() === "") {
                 alert("Il nome è obbligatorio.");
                 return;
             }
 
-            if (cognome.trim() === "") 
-            {
+            if (cognome.trim() === "") {
                 alert("Il cognome è obbligatorio.");
                 return;
             }
 
-            if (email.trim() === "") 
-            {
+            if (email.trim() === "") {
                 alert("La mail è obbligatoria.");
                 return;
             }
 
-            if (password.trim() === "") 
-            {
+            if (password.trim() === "") {
                 alert("La password è obbligatoria.");
                 return;
             }
@@ -64,88 +62,40 @@
                 .then(res => res.json())
                 .then(fornitori => {
                     const tabella = document.getElementById("tabellaFornitori");
+                    tabella.innerHTML = "";
 
-                    tabellaFornitori.innerHTML = "";
-                    const rigaIntestazioneFornitori = document.createElement("tr");
-                    const intestazioneIDFornitore = document.createElement("th");
-                    intestazioneIDFornitore.textContent = 'ID';
-                    rigaIntestazioneFornitori.appendChild(intestazioneIDFornitore);
-                    const intestazioneNomeFornitore = document.createElement("th");
-                    intestazioneNomeFornitore.textContent = 'Nome';
-                    rigaIntestazioneFornitori.appendChild(intestazioneNomeFornitore);
-                    const intestazioneCognomeFornitore = document.createElement("th");
-                    intestazioneCognomeFornitore.textContent = 'Cognome';
-                    rigaIntestazioneFornitori.appendChild(intestazioneCognomeFornitore);
-                    const intestazioneEmailFornitore = document.createElement("th");
-                    intestazioneEmailFornitore.textContent = 'Email';
-                    rigaIntestazioneFornitori.appendChild(intestazioneEmailFornitore);
-                    const intestazioneIndirizzoFornitore = document.createElement("th");
-                    intestazioneIndirizzoFornitore.textContent = 'Indirizzo';
-                    rigaIntestazioneFornitori.appendChild(intestazioneIndirizzoFornitore);
-                    const intestazioneTelefonoFornitore = document.createElement("th");
-                    intestazioneTelefonoFornitore.textContent = 'Telefono';
-                    rigaIntestazioneFornitori.appendChild(intestazioneTelefonoFornitore);
-                    const intestazioneNomeAziendaFornitore = document.createElement("th");
-                    intestazioneNomeAziendaFornitore.textContent = 'Nome Azienda';
-                    rigaIntestazioneFornitori.appendChild(intestazioneNomeAziendaFornitore);
-                    const intestazioneEliminaFornitore = document.createElement("th");
-                    intestazioneEliminaFornitore.textContent = 'Elimina';
-                    rigaIntestazioneFornitori.appendChild(intestazioneEliminaFornitore);
-                    tabellaFornitori.appendChild(rigaIntestazioneFornitori);
+                    const header = `
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Cognome</th>
+                                <th>Email</th>
+                                <th>Indirizzo</th>
+                                <th>Telefono</th>
+                                <th>Nome Azienda</th>
+                                <th>Elimina</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>`;
+                    tabella.innerHTML = header;
 
+                    const tbody = tabella.querySelector("tbody");
 
                     fornitori.forEach(fornitore => {
-                        const rigaFornitore = document.createElement("tr");
-
-                        const idCellFornitore = document.createElement("td");
-                        idCellFornitore.textContent = fornitore.id;
-                        rigaFornitore.appendChild(idCellFornitore);
-
-                        const nomeCellFornitore = document.createElement("td");
-                        nomeCellFornitore.textContent = fornitore.nome;
-                        rigaFornitore.appendChild(nomeCellFornitore);
-
-                        const cognomeCellFornitore = document.createElement("td");
-                        cognomeCellFornitore.textContent = fornitore.cognome;
-                        rigaFornitore.appendChild(cognomeCellFornitore);
-
-                        const emailCellFornitore = document.createElement("td");
-                        emailCellFornitore.textContent = fornitore.email;
-                        rigaFornitore.appendChild(emailCellFornitore);
-
-                        const indirizzoCellFornitore = document.createElement("td");
-                        indirizzoCellFornitore.textContent = fornitore.indirizzo;
-                        rigaFornitore.appendChild(indirizzoCellFornitore);
-
-                        const telefonoCellFornitore = document.createElement("td");
-                        telefonoCellFornitore.textContent = fornitore.telefono;
-                        rigaFornitore.appendChild(telefonoCellFornitore);
-
-                        const nomeAziendaCellFornitore = document.createElement("td");
-                        nomeAziendaCellFornitore.textContent = fornitore.nomeAzienda;
-                        rigaFornitore.appendChild(nomeAziendaCellFornitore);
-
-                        const eliminaCellFornitore = document.createElement("td");
-                        const eliminaBtnFornitore = document.createElement("button");
-                        eliminaBtnFornitore.textContent = "Elimina";
-                        eliminaBtnFornitore.addEventListener("click", () => eliminaFornitore(fornitore.id));
-                        eliminaCellFornitore.appendChild(eliminaBtnFornitore);
-                        rigaFornitore.appendChild(eliminaCellFornitore);
-
-                        rigaFornitore.append(
-                            idCellFornitore,
-                            nomeCellFornitore,
-                            cognomeCellFornitore,
-                            emailCellFornitore,
-                            indirizzoCellFornitore,
-                            telefonoCellFornitore,
-                            nomeAziendaCellFornitore,
-                            eliminaCellFornitore
-                        );
-
-                        tabellaFornitori.appendChild(rigaFornitore);
+                        const riga = document.createElement("tr");
+                        riga.innerHTML = `
+                            <td>${fornitore.id}</td>
+                            <td>${fornitore.nome}</td>
+                            <td>${fornitore.cognome}</td>
+                            <td>${fornitore.email}</td>
+                            <td>${fornitore.indirizzo}</td>
+                            <td>${fornitore.telefono}</td>
+                            <td>${fornitore.nomeAzienda}</td>
+                            <td><button class="btn btn-danger btn-sm" onclick="eliminaFornitore(${fornitore.id})">Elimina</button></td>
+                        `;
+                        tbody.appendChild(riga);
                     });
-
                 });
         }
 
@@ -162,24 +112,59 @@
     </script>
 </head>
 
-<body onload="caricamento()">
-    <h1>Gestione Fornitori</h1>
-    <button onclick="tornaIndietro()">Torna home</button>
+<body onload="caricamento()" class="bg-light">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Gestione Fornitori</h1>
+            <button class="btn btn-secondary" onclick="tornaIndietro()">Torna Home</button>
+        </div>
 
-    <h2>Inserisci Nuovo Fornitore</h2>
-    <form id="formFornitore">
-        Nome: <input type="text" id="nome" required><br>
-        Cognome: <input type="text" id="cognome" required><br>
-        Email: <input type="email" id="email" required><br>
-        Indirizzo: <input type="text" id="indirizzo"><br>
-        Telefono: <input type="tel" id="telefono"><br>
-        Nome Azienda: <input type="text" id="nomeAzienda"><br>
-        Password: <input type="password" id="password" required><br>
-        <button type="submit" onclick="event.preventDefault(); inserisciFornitore()">Inserisci</button>
-    </form>
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">Inserisci Nuovo Fornitore</div>
+            <div class="card-body">
+                <form id="formFornitore" onsubmit="event.preventDefault(); inserisciFornitore();">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome</label>
+                            <input type="text" id="nome" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cognome</label>
+                            <input type="text" id="cognome" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Indirizzo</label>
+                            <input type="text" id="indirizzo" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Telefono</label>
+                            <input type="tel" id="telefono" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nome Azienda</label>
+                            <input type="text" id="nomeAzienda" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Password</label>
+                            <input type="password" id="password" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-success">Inserisci</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-    <h2>Lista Fornitori</h2>
-    <table id="tabellaFornitori"></table>
+        <h2>Lista Fornitori</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="tabellaFornitori"></table>
+        </div>
+    </div>
 </body>
 
 </html>
